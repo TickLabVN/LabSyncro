@@ -156,7 +156,7 @@ onMounted(async () => {
               </Badge>
             </div>
           </TableCell>
-          <TableCell>{{ formatLastActive(user.last_active_at) }}</TableCell>
+          <TableCell>{{ formatLastActive(user.lastActiveAt) }}</TableCell>
         </TableRow>
       </TableBody>
     </Table>

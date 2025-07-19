@@ -1,5 +1,5 @@
-import { Type } from '@sinclair/typebox';
 import type { Static } from '@sinclair/typebox';
+import { Type } from '@sinclair/typebox';
 
 export const CategoryResourceDto = Type.Object({
   id: Type.String(),
@@ -198,8 +198,8 @@ export const UserResourceDto = Type.Object({
   tel: Type.Union([Type.String(), Type.Null()]),
   name: Type.String(),
   email: Type.String(),
-  last_active_at: Type.Date(),
-  roles: Type.Array(Type.Object({ name: Type.String(), key: Type.String() })),
+  lastActiveAt: Type.Date(),
+  roles: Type.Array(Type.String()),
 });
 
 export type UserResourceDto = Static<typeof UserResourceDto>;

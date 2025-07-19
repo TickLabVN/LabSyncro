@@ -8,44 +8,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Action {
-  id          BigInt       @id(map: "action_pkey") @default(autoincrement())
-  created_at  DateTime     @default(now()) @db.Timestamptz(6)
-  name        String       @unique(map: "action_name_key")
-  permissions Permission[]
-
-  @@map("actions")
-}
-
-model Activity {
-  id                                                      String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  type                                                    ActivityType
-  created_at                                              DateTime             @default(now()) @db.Timestamptz(6)
-  note                                                    String?
-  inventory_assessments                                   InventoryAssessment?
-  maintenances                                            Maintenance?
-  receipts_devices_receipts_devices_borrow_idToactivities ReceiptDevice[]      @relation("receipts_devices_borrow_idToactivities")
-  receipts_devices_receipts_devices_return_idToactivities ReceiptDevice[]      @relation("receipts_devices_return_idToactivities")
-  shipments_shipments_from_atToactivities                 Shipment[]           @relation("shipments_from_atToactivities")
-  shipments_shipments_to_atToactivities                   Shipment[]           @relation("shipments_to_atToactivities")
-
-  @@map("activities")
-}
-
 model Category {
-  id           BigInt       @id @default(autoincrement())
-  created_at   DateTime     @default(now()) @db.Timestamptz(6)
-  name         String
-  quantity     BigInt?
-  device_kinds DeviceKind[]
+  id          BigInt       @id @default(autoincrement())
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  name        String
+  quantity    BigInt?
+  deviceKinds DeviceKind[]
 
   @@map("categories")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model DeviceKind {
-  created_at                                          DateTime  @default(now()) @db.Timestamptz(6)
-  category_id                                         BigInt?
+  category    Category? @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  category_id BigInt?
+
+  createdAt                                           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   name                                                String?
   meta                                                Json
   image                                               Json?
@@ -60,7 +38,6 @@ model DeviceKind {
   allowed_borrow_roles                                String[]
   allowed_view_roles                                  String[]
   is_borrowable_lab_only                              Boolean   @default(false)
-  categories                                          Category? @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   devices_devices_accessory_for_kind_idTodevice_kinds Device[]  @relation("devices_accessory_for_kind_idTodevice_kinds")
   devices_devices_kindTodevice_kinds                  Device[]  @relation("devices_kindTodevice_kinds")
 
@@ -115,7 +92,6 @@ model InventoryAssessment {
   accountant_id                 String?
   status                        AssessmentStatus
   users                         User?                       @relation(fields: [accountant_id], references: [id], onDelete: Restrict)
-  activities                    Activity                    @relation(fields: [id], references: [id], onUpdate: Restrict)
   labs                          Lab                         @relation(fields: [lab_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   inventory_assessments_devices InventoryAssessmentDevice[]
 
@@ -165,7 +141,6 @@ model Maintenance {
   maintainer_id        String?
   finished_at          DateTime?           @db.Timestamptz(6)
   lab_id               String              @db.Uuid
-  activities           Activity            @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_maintenances_activities")
   labs                 Lab                 @relation(fields: [lab_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users                User?               @relation(fields: [maintainer_id], references: [id], onDelete: Restrict)
   maintenances_devices MaintenanceDevice[]
@@ -181,99 +156,59 @@ model MaintenanceDevice {
   maintaining_id String        @db.Uuid
   device_id      String?
   devices        Device?       @relation(fields: [device_id], references: [id])
-  maintenance    Maintenance   @relation(fields: [maintaining_id], references: [id], onDelete: SetNull)
+  maintenance    Maintenance   @relation(fields: [maintaining_id], references: [id])
 
   @@map("maintenances_devices")
 }
 
-model Permission {
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-  role_id     BigInt
-  resource_id BigInt
-  action_id   BigInt
-  priority    Int      @default(0) @db.SmallInt
-  actions     Action   @relation(fields: [action_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "permission_action_id_fkey")
-  resources   Resource @relation(fields: [resource_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "permission_resource_id_fkey")
-  roles       Role     @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "permission_role_id_fkey")
-
-  @@id([role_id, resource_id, action_id], map: "permission_pkey")
-  @@map("permissions")
-}
-
 model Receipt {
-  id                                                              String          @id
-  actor_id                                                        String
-  checker_id                                                      String
-  lab_id                                                          String          @db.Uuid
-  users_receipts_actor_idTousers                                  User            @relation("receipts_actor_idTousers", fields: [actor_id], references: [id])
-  users_receipts_checker_idTousers                                User            @relation("receipts_checker_idTousers", fields: [checker_id], references: [id])
-  labs                                                            Lab             @relation(fields: [lab_id], references: [id], onDelete: SetNull)
-  receipts_devices_receipts_devices_borrowed_receipt_idToreceipts ReceiptDevice[] @relation("receipts_devices_borrowed_receipt_idToreceipts")
-  receipts_devices_receipts_devices_returned_receipt_idToreceipts ReceiptDevice[] @relation("receipts_devices_returned_receipt_idToreceipts")
+  id            String          @id
+  actor_id      String
+  checker_id    String
+  lab_id        String          @db.Uuid
+  labs          Lab             @relation(fields: [lab_id], references: [id])
+  ReceiptDevice ReceiptDevice[]
+  userId        String?
+  User          User?           @relation(fields: [userId], references: [id])
 
   @@map("receipts")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model ReceiptDevice {
-  borrowed_receipt_id                                     String
-  device_id                                               String
-  prev_quality                                            DeviceStatus?
-  borrow_id                                               String?       @db.Uuid
-  return_id                                               String?       @db.Uuid
-  expected_returned_at                                    DateTime      @db.Timestamptz(6)
-  id                                                      String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  expected_returned_lab_id                                String?       @db.Uuid
-  after_quality                                           DeviceStatus?
-  returned_receipt_id                                     String?
-  activities_receipts_devices_borrow_idToactivities       Activity?     @relation("receipts_devices_borrow_idToactivities", fields: [borrow_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_receipts_devices_borrow_activities")
-  activities_receipts_devices_return_idToactivities       Activity?     @relation("receipts_devices_return_idToactivities", fields: [return_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_receipts_devices_return_activities")
-  receipts_receipts_devices_borrowed_receipt_idToreceipts Receipt       @relation("receipts_devices_borrowed_receipt_idToreceipts", fields: [borrowed_receipt_id], references: [id], onDelete: SetNull)
-  devices                                                 Device        @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  labs                                                    Lab?          @relation(fields: [expected_returned_lab_id], references: [id])
-  receipts_receipts_devices_returned_receipt_idToreceipts Receipt?      @relation("receipts_devices_returned_receipt_idToreceipts", fields: [returned_receipt_id], references: [id])
+  borrowed_receipt_id      String
+  device_id                String
+  prev_quality             DeviceStatus?
+  borrow_id                String?       @db.Uuid
+  return_id                String?       @db.Uuid
+  expected_returned_at     DateTime      @db.Timestamptz(6)
+  id                       String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  expected_returned_lab_id String?       @db.Uuid
+  after_quality            DeviceStatus?
+  returned_receipt_id      String?
+  devices                  Device        @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  labs                     Lab?          @relation(fields: [expected_returned_lab_id], references: [id])
+  Receipt                  Receipt?      @relation(fields: [receiptId], references: [id])
+  receiptId                String?
 
   @@map("receipts_devices")
 }
 
-model Resource {
-  id          BigInt       @id(map: "resource_pkey") @default(autoincrement())
-  created_at  DateTime     @default(now()) @db.Timestamptz(6)
-  name        String       @unique(map: "resource_name_key")
-  type        String?
-  permissions Permission[]
-
-  @@map("resources")
-}
-
-model Role {
-  id          BigInt       @id(map: "role_pkey") @default(autoincrement())
-  created_at  DateTime     @default(now()) @db.Timestamptz(6)
-  key         String       @unique(map: "role_name_key")
-  name        String?
-  permissions Permission[]
-  user_roles  UserRole[]
-
-  @@map("roles")
-}
-
 model Shipment {
-  id                                       String           @id
-  sender_id                                String?
-  receiver_id                              String?
-  status                                   ShipmentStatus
-  start_lab_id                             String           @db.Uuid
-  arrive_lab_id                            String           @db.Uuid
-  from_at                                  String?          @db.Uuid
-  to_at                                    String?          @db.Uuid
-  check_at_destination                     Boolean?         @default(false)
-  labs_shipments_arrive_lab_idTolabs       Lab              @relation("shipments_arrive_lab_idTolabs", fields: [arrive_lab_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  activities_shipments_from_atToactivities Activity?        @relation("shipments_from_atToactivities", fields: [from_at], references: [id])
-  users_shipments_receiver_idTousers       User?            @relation("shipments_receiver_idTousers", fields: [receiver_id], references: [id], onDelete: Restrict)
-  users_shipments_sender_idTousers         User?            @relation("shipments_sender_idTousers", fields: [sender_id], references: [id], onDelete: Restrict)
-  labs_shipments_start_lab_idTolabs        Lab              @relation("shipments_start_lab_idTolabs", fields: [start_lab_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  activities_shipments_to_atToactivities   Activity?        @relation("shipments_to_atToactivities", fields: [to_at], references: [id])
-  shipments_devices                        ShipmentDevice[]
+  id                                 String           @id
+  sender_id                          String?
+  receiver_id                        String?
+  status                             ShipmentStatus
+  start_lab_id                       String           @db.Uuid
+  arrive_lab_id                      String           @db.Uuid
+  from_at                            String?          @db.Uuid
+  to_at                              String?          @db.Uuid
+  check_at_destination               Boolean?         @default(false)
+  labs_shipments_arrive_lab_idTolabs Lab              @relation("shipments_arrive_lab_idTolabs", fields: [arrive_lab_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_shipments_receiver_idTousers User?            @relation("shipments_receiver_idTousers", fields: [receiver_id], references: [id], onDelete: Restrict)
+  users_shipments_sender_idTousers   User?            @relation("shipments_sender_idTousers", fields: [sender_id], references: [id], onDelete: Restrict)
+  labs_shipments_start_lab_idTolabs  Lab              @relation("shipments_start_lab_idTolabs", fields: [start_lab_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  shipments_devices                  ShipmentDevice[]
 
   @@map("shipments")
 }
@@ -286,69 +221,55 @@ model ShipmentDevice {
   shipment_id  String
   device_id    String?
   devices      Device?       @relation(fields: [device_id], references: [id])
-  shipments    Shipment      @relation(fields: [shipment_id], references: [id], onDelete: SetNull)
+  shipments    Shipment      @relation(fields: [shipment_id], references: [id])
 
   @@map("shipments_devices")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model UsedQRTokens {
-  id         BigInt   @id @default(autoincrement())
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  token      String
-  user_id    String
-  users      User     @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  token     String
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
 
-  @@unique([token, user_id], map: "unique_token_user")
+  @@unique([token, userId])
   @@map("used_qr_tokens")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model UserRole {
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  user_id    String
-  role_id    BigInt
-  roles      Role     @relation(fields: [role_id], references: [id], onDelete: SetNull, map: "user_role_role_id_fkey")
-  users      User     @relation(fields: [user_id], references: [id])
-
-  @@id([user_id, role_id], map: "user_role_pkey")
-  @@map("user_roles")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model User {
-  id                                     String                @id(map: "user_pkey")
-  created_at                             DateTime              @default(now()) @db.Timestamptz(6)
-  name                                   String
-  meta                                   Json
-  email                                  String?               @unique(map: "user_email_key")
-  password                               String?
-  image                                  String?
-  tel                                    String?
-  deleted_at                             DateTime?             @db.Timestamptz(6)
-  last_active_at                         DateTime?             @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
-  hmi_codes                              HMICode[]
-  inventory_assessments                  InventoryAssessment[]
+  id       String     @id(map: "user_pkey")
+  name     String
+  meta     Json
+  email    String?    @unique
+  password String?
+  avatar   String?
+  tel      String?
+  roles    UserRole[]
+
+  hmiCodes                               HMICode[]
+  assessments                            InventoryAssessment[]
   labs                                   Lab[]
   maintenances                           Maintenance[]
-  receipts_receipts_actor_idTousers      Receipt[]             @relation("receipts_actor_idTousers")
-  receipts_receipts_checker_idTousers    Receipt[]             @relation("receipts_checker_idTousers")
   shipments_shipments_receiver_idTousers Shipment[]            @relation("shipments_receiver_idTousers")
   shipments_shipments_sender_idTousers   Shipment[]            @relation("shipments_sender_idTousers")
-  used_qr_tokens                         UsedQRTokens[]
-  user_roles                             UserRole[]
+  usedQrTokens                           UsedQRTokens[]
+  receipts                               Receipt[]
+
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  deletedAt    DateTime? @map("deleted_at")
+  lastActiveAt DateTime? @map("last_activate_at")
 
   @@map("users")
 }
 
-enum ActivityType {
-  borrow
-  return
-  maintenance
-  shipment
-  assessment
-
-  @@map("activity_type")
+enum UserRole {
+  SYSTEM_ADMIN
+  LAB_ADMIN
+  COLLABORATOR
+  TEACHER
+  STUDENT
 }
 
 enum AssessmentStatus {
