@@ -1,14 +1,14 @@
 <script setup lang="ts">
-definePageMeta({
-  middleware: ['permission'],
-  layout: 'setting'
-});
-
 import { Search, Monitor, ChevronDown } from 'lucide-vue-next';
 import { userService } from '@/services';
 import type { RoleDetailDto } from '@/lib/api_schema';
 import { useToast } from 'vue-toastification';
 import { isEqual, sortBy } from 'lodash';
+
+definePageMeta({
+  middleware: ['permission'],
+  layout: 'setting'
+});
 
 const toast = useToast();
   
@@ -73,8 +73,8 @@ const handleSave = async () => {
         <Button 
           class="bg-tertiary-darker !text-white text-normal w-24 hover:bg-blue-700" 
           size="sm"
-          @click="handleSave"
           :disabled="isEqual(sortBy(selectedPermissions), sortBy(roleDetail?.permissions?.flatMap(p => p.actions.map(a => `${p.resource}-${a}`)) || []))"
+          @click="handleSave"
         >
           Lưu thay đổi
         </Button>

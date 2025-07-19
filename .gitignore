@@ -10,3 +10,5 @@ zapatos/
 .cursor
 docs
 tasks
+.vscode
+/lib/generated/prisma

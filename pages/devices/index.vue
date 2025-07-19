@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { debounce } from 'lodash-es';
+import { categoryService } from '~/services';
+
 definePageMeta({
   middleware: ['permission']
 });
-
-import { debounce } from 'lodash-es';
-import { categoryService } from '~/services';
 
 const route = useRoute();
 const categoryId = computed(() => {

@@ -7,7 +7,8 @@ export default withNuxt({
     indent: ['error', 2],
     quotes: ['error', 'single'],
     '@typescript-eslint/no-explicit-any': 'warn',
-    'space-before-function-paren': ['error', 'always'],
+    '@typescript-eslint/no-unused-vars': 'warn',
+    'space-before-function-paren': ['off'],
     'vue/multi-word-component-names': ['off'],
   },
 });

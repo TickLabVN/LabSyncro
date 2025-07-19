@@ -70,10 +70,10 @@ onMounted(() => {
       </DialogHeader>
       <div class="flex flex-col items-center justify-center gap-4 p-4">
         <div v-if="isLoading" class="flex items-center justify-center w-64 h-64">
-          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"/>
         </div>
         <div v-else-if="qrDataUrl" class="border-2 border-gray-200 p-2">
-          <img :src="qrDataUrl" alt="QR Code" class="w-64 h-64" />
+          <img :src="qrDataUrl" alt="QR Code" class="w-64 h-64" >
         </div>
         <div v-else class="text-center text-red-500">
           Không thể tạo mã QR. Vui lòng thử lại.
@@ -84,15 +84,15 @@ onMounted(() => {
             <div
               class="bg-primary h-2.5 rounded-full"
               :style="{ width: `${(timeLeft / 30) * 100}%` }"
-            ></div>
+            />
           </div>
           <span class="text-sm text-gray-500">{{ timeLeft }}s</span>
         </div>
         
         <Button
-          @click="regenerateQrCode"
           class="w-full"
           :disabled="isLoading"
+          @click="regenerateQrCode"
         >
           <Icon v-if="isLoading" name="i-heroicons-arrow-path" class="w-4 h-4 mr-2 animate-spin" />
           <Icon v-else name="i-heroicons-arrow-path" class="w-4 h-4 mr-2" />

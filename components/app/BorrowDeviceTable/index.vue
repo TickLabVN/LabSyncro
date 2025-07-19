@@ -17,6 +17,7 @@ async function fetchData(offset: number, length: number, options: { desc?: boole
 </script>
 
 <template>
-  <DataTable :selectable="true" :searchable="true" :qrable="true" :fetch-fn="fetchData"
+  <DataTable
+:selectable="true" :searchable="true" :qrable="true" :fetch-fn="fetchData"
     :columns="columns as AugmentedColumnDef<unknown>[]" />
 </template>

@@ -1,21 +1,21 @@
-export function useClick (elementRef: Ref<Element | null>): { isActive: Ref<boolean>, setInactive: () => void, setActive: () => void } {
+export function useClick(elementRef: Ref<Element | null>): { isActive: Ref<boolean>, setInactive: () => void, setActive: () => void } {
   const isActive = ref(false);
 
   let didSomeCallbackRun = false;
 
-  function setActive () {
+  function setActive() {
     if (didSomeCallbackRun) return;
     didSomeCallbackRun = true;
     isActive.value = true;
   }
 
-  function setInactive () {
+  function setInactive() {
     if (didSomeCallbackRun) return;
     didSomeCallbackRun = true;
     isActive.value = false;
   }
 
-  function clickInsideHandler () {
+  function clickInsideHandler() {
     setTimeout(() => {
       if (didSomeCallbackRun) return;
       didSomeCallbackRun = true;
@@ -23,7 +23,7 @@ export function useClick (elementRef: Ref<Element | null>): { isActive: Ref<bool
     }, 0);
   };
 
-  function clickOutsideHandler () {
+  function clickOutsideHandler() {
     setTimeout(() => {
       if (didSomeCallbackRun) {
         didSomeCallbackRun = false;
@@ -32,7 +32,7 @@ export function useClick (elementRef: Ref<Element | null>): { isActive: Ref<bool
       isActive.value = false;
     }, 0);
   };
- 
+
   onMounted(() => document.addEventListener('click', clickOutsideHandler));
   onUnmounted(() => document.removeEventListener('click', clickOutsideHandler));
   onMounted(() => elementRef.value?.addEventListener('click', clickInsideHandler));

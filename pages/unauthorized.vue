@@ -13,21 +13,21 @@ const errorType = computed(() => route.query.error as string);
 
 const errorContent = computed(() => {
   switch (errorType.value) {
-    case 'UNAUTHORIZED_DOMAIN':
-      return {
-        title: 'Invalid Email Domain',
-        message: 'Only HCMUT email addresses (@hcmut.edu.vn) are allowed to access this application. Please sign in with your HCMUT account.'
-      };
-    case 'PERMISSION_DENIED':
-      return {
-        title: 'Access Denied',
-        message: 'You don\'t have permission to access this resource. Please contact your administrator if you believe this is a mistake.'
-      };
-    default:
-      return {
-        title: 'Access Denied',
-        message: 'You don\'t have permission to access this page. Please contact your administrator if you believe this is a mistake.'
-      };
+  case 'UNAUTHORIZED_DOMAIN':
+    return {
+      title: 'Invalid Email Domain',
+      message: 'Only HCMUT email addresses (@hcmut.edu.vn) are allowed to access this application. Please sign in with your HCMUT account.'
+    };
+  case 'PERMISSION_DENIED':
+    return {
+      title: 'Access Denied',
+      message: 'You don\'t have permission to access this resource. Please contact your administrator if you believe this is a mistake.'
+    };
+  default:
+    return {
+      title: 'Access Denied',
+      message: 'You don\'t have permission to access this page. Please contact your administrator if you believe this is a mistake.'
+    };
   }
 });
 

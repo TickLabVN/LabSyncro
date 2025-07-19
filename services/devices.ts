@@ -4,10 +4,11 @@ import type {
   PrintQRCodeDto,
 } from '~/lib/api_schema';
 
-const { PRINT_LABELS_URL } = useRuntimeConfig();
+const { PRINT_LABELS_URL } =
+  useRuntimeConfig();
 
 export const deviceService = {
-  async getByKind (
+  async getByKind(
     kindId: string,
     offset: number,
     length: number,
@@ -38,7 +39,7 @@ export const deviceService = {
     });
   },
 
-  async createDevices (
+  async createDevices(
     devices: { deviceKindId: string; labId: string }[],
   ): Promise<{ id: string }[]> {
     return await $fetch('/api/devices', {
@@ -50,9 +51,9 @@ export const deviceService = {
     });
   },
 
-  async printQRCode ({ devices }: { devices: PrintQRCodeDto[] }): Promise<void> {
+  async printQRCode({ devices }: { devices: PrintQRCodeDto[] }): Promise<void> {
     return await $fetch(
-      'https://3875-2001-ee0-5201-5e90-a258-30a3-e438-3ece.ngrok-free.app/print_labels',
+      PRINT_LABELS_URL,
       {
         method: 'POST',
         body: { devices },
@@ -60,7 +61,7 @@ export const deviceService = {
     );
   },
 
-  async updatePrintedAt (
+  async updatePrintedAt(
     devices: { id: string; printedAt: Date }[],
   ): Promise<void> {
     return await $fetch('/api/devices/printed', {
@@ -72,7 +73,7 @@ export const deviceService = {
     });
   },
 
-  async checkDevice (
+  async checkDevice(
     deviceId: string,
     lab_id: string,
   ): Promise<DeviceCheckerResourceDto> {

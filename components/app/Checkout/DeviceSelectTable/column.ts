@@ -1,6 +1,6 @@
-import { Icon, NuxtLink } from '#components';
-import type { DeviceSchema } from './schema';
+import { Icon } from '#components';
 import type { AugmentedColumnDef } from '~/components/common/DataTable/column';
+import type { DeviceSchema } from './schema';
 
 const statusMap = {
   healthy: 'Tốt',
@@ -13,7 +13,7 @@ const statusMap = {
   lost: 'Mất',
 };
 
-export function createColumns (
+export function createColumns(
   borrowedDevices: string[],
   actions: {
     deleteDevice: (id: string) => void;

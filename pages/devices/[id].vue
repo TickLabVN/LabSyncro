@@ -1,11 +1,11 @@
 <script setup lang="ts">
-definePageMeta({
-  middleware: ['permission']
-});
-
 import { debounce, sortBy } from 'lodash-es';
 import { deviceKindService, categoryService } from '~/services';
 import { createColumns } from '~/components/app/DeviceInventoryByLabTable/column';
+
+definePageMeta({
+  middleware: ['permission']
+});
 
 const route = useRoute();
 const deviceKindId = computed(() => route.params.id.toString());

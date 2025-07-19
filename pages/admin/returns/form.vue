@@ -1,18 +1,18 @@
 <script setup lang="ts">
-definePageMeta({
-  middleware: ["permission"],
-});
-
-import moment from "moment";
+import moment from 'moment';
+import type { ToastInterface } from 'vue-toastification';
+import { useToast } from 'vue-toastification';
+import OneTimeQrModal from '~/components/app/OneTimeQrModal.vue';
 import {
   deviceKindService,
+  deviceService,
   receiptService,
   userService,
-  deviceService,
-} from "~/services";
-import { useToast } from "vue-toastification";
-import type { ToastInterface } from "vue-toastification";
-import OneTimeQrModal from "~/components/app/OneTimeQrModal.vue";
+} from '~/services';
+
+definePageMeta({
+  middleware: ['permission'],
+});
 
 // Types
 interface DeviceInCart {
@@ -43,7 +43,7 @@ const selectedDevices = computed(() =>
 
 // Form state
 const formState = reactive<ReturnFormState>({
-  userId: "",
+  userId: '',
   receiptCode: generateUniqueId(),
   returnDate: new Date(),
   returnLabId: lab.value?.id || null,
@@ -51,13 +51,13 @@ const formState = reactive<ReturnFormState>({
 
 // User info state
 const userInfo = reactive({
-  fullName: "",
-  role: "",
-  translatedRole: "Vai trò không hợp lệ",
+  fullName: '',
+  role: '',
+  translatedRole: 'Vai trò không hợp lệ',
 });
 
 // Validation
-const VALID_ROLES = ["student", "teacher", "lab_admin"] as const;
+const VALID_ROLES = ['student', 'teacher', 'lab_admin'] as const;
 type ValidRole = (typeof VALID_ROLES)[number];
 
 const isValidForm = computed(() => {
@@ -72,20 +72,20 @@ const isValidForm = computed(() => {
 
 // Utilities
 function generateUniqueId(): string {
-  const datePrefix = moment().format("YYYYMMDD");
+  const datePrefix = moment().format('YYYYMMDD');
   const randomSuffix = Math.floor(Math.random() * 1000000)
     .toString()
-    .padStart(6, "0");
+    .padStart(6, '0');
   return `${datePrefix}/${randomSuffix}`;
 }
 
 function translateRole(role: ValidRole): string {
   const roleMap: Record<ValidRole, string> = {
-    student: "Sinh viên",
-    teacher: "Giảng viên",
-    lab_admin: "Quản lý phòng lab",
+    student: 'Sinh viên',
+    teacher: 'Giảng viên',
+    lab_admin: 'Quản lý phòng lab',
   };
-  return roleMap[role] || "Vai trò không hợp lệ";
+  return roleMap[role] || 'Vai trò không hợp lệ';
 }
 
 // Modal handlers
@@ -115,7 +115,7 @@ async function addDevice({ kind, id }: { kind: string; id: string }) {
       deviceIds: [id],
     });
   } catch (error) {
-    toast.error("Không thể thêm thiết bị");
+    toast.error('Không thể thêm thiết bị');
   }
 }
 
@@ -147,34 +147,34 @@ async function handleUserCodeChange(userId: string) {
   const isValidUserCode = /^\d{7}$/.test(userId);
 
   if (!isValidUserCode) {
-    userInfo.fullName = "";
-    userInfo.role = "";
-    userInfo.translatedRole = "Vai trò không hợp lệ";
+    userInfo.fullName = '';
+    userInfo.role = '';
+    userInfo.translatedRole = 'Vai trò không hợp lệ';
     return;
   }
 
   try {
     const userMeta = await userService.getUserById(userId);
-    if (!userMeta) throw new Error("User not found");
+    if (!userMeta) throw new Error('User not found');
 
-    userInfo.fullName = userMeta.name || "";
+    userInfo.fullName = userMeta.name || '';
     const userRole = userMeta.roles[0]?.key;
     if (userRole && VALID_ROLES.includes(userRole as ValidRole)) {
       userInfo.role = userRole;
       userInfo.translatedRole = translateRole(userRole as ValidRole);
     } else {
-      userInfo.role = "";
-      userInfo.translatedRole = "Vai trò không hợp lệ";
+      userInfo.role = '';
+      userInfo.translatedRole = 'Vai trò không hợp lệ';
     }
   } catch (error) {
-    toast.error("Không thể tìm thấy thông tin người dùng");
+    toast.error('Không thể tìm thấy thông tin người dùng');
   }
 }
 
 // Form submission
 async function submitReturnForm() {
   if (!isValidForm.value) {
-    toast.error("Vui lòng điền đầy đủ thông tin");
+    toast.error('Vui lòng điền đầy đủ thông tin');
     return;
   }
 
@@ -186,10 +186,10 @@ async function submitReturnForm() {
       returnerId: formState.userId,
       deviceIds: selectedDevices.value,
     });
-    toast.success("Đã trả thiết bị thành công");
+    toast.success('Đã trả thiết bị thành công');
     reloadNuxtApp();
   } catch (error) {
-    toast.error("Không thể trả thiết bị");
+    toast.error('Không thể trả thiết bị');
   }
 }
 
@@ -198,35 +198,35 @@ const showQrModal = ref(false);
 
 // Handle scan QR code button click
 function handleScanQrClick() {
-  toast.info("Quét mã QR một lần của người dùng");
+  toast.info('Quét mã QR một lần của người dùng');
 }
 
 // Scanner handlers
 const handleVirtualKeyboardDetection = async (
   input: string,
-  type?: "userId" | "device" | "oneTimeQr"
+  type?: 'userId' | 'device' | 'oneTimeQr'
 ) => {
-  if (type === "userId") {
+  if (type === 'userId') {
     formState.userId = input;
     await handleUserCodeChange(input);
-  } else if (type === "device") {
+  } else if (type === 'device') {
     try {
       const deviceKindId = input.match(/\/devices\/([a-fA-F0-9]+)/)?.[1];
       const deviceId = input.match(/[?&]id=([a-fA-F0-9]+)/)![1];
 
-      const { id, status } = await deviceService.checkDevice(
+      const { status } = await deviceService.checkDevice(
         deviceId,
         lab.value.id
       );
-      if (status === "borrowing") {
+      if (status === 'borrowing') {
         await addDevice({ kind: deviceKindId!, id: deviceId });
       } else {
-        toast.warning("Thiết bị này không trong trạng thái đang mượn");
+        toast.warning('Thiết bị này không trong trạng thái đang mượn');
       }
     } catch (error) {
-      toast.error("Không thể kiểm tra thiết bị");
+      toast.error('Không thể kiểm tra thiết bị');
     }
-  } else if (type === "oneTimeQr") {
+  } else if (type === 'oneTimeQr') {
     try {
       const { verifyScannedQrCode } = useOneTimeQrCode();
 
@@ -235,10 +235,10 @@ const handleVirtualKeyboardDetection = async (
         const { userId } = result;
         formState.userId = userId;
         await handleUserCodeChange(userId);
-        toast.success("Xác thực người dùng thành công");
+        toast.success('Xác thực người dùng thành công');
       }
     } catch (error) {
-      toast.error("Không thể xác thực mã QR");
+      toast.error('Không thể xác thực mã QR');
     }
   }
 };
@@ -247,7 +247,7 @@ const handleVirtualKeyboardDetection = async (
 onMounted(async () => {
   const { userId, deviceKindId, deviceId } = route.query;
 
-  if (userId && typeof userId === "string") {
+  if (userId && typeof userId === 'string') {
     formState.userId = userId;
     await handleUserCodeChange(userId);
   }
@@ -255,8 +255,8 @@ onMounted(async () => {
   if (
     deviceKindId &&
     deviceId &&
-    typeof deviceKindId === "string" &&
-    typeof deviceId === "string"
+    typeof deviceKindId === 'string' &&
+    typeof deviceId === 'string'
   ) {
     await addDevice({ kind: deviceKindId, id: deviceId });
   }
@@ -289,10 +289,7 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
           <p class="font-semibold">/</p>
         </BreadcrumbSeparator>
         <BreadcrumbItem>
-          <NuxtLink
-            class="text-normal font-bold underline text-black"
-            href="/admin/borrows/form"
-          >
+          <NuxtLink class="text-normal font-bold underline text-black" href="/admin/borrows/form">
             Trả thiết bị
           </NuxtLink>
         </BreadcrumbItem>
@@ -308,18 +305,12 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
               <CheckoutDeviceSearchBox @device-select="openModalForDeviceId" />
               <CheckoutQrButton />
               <CheckoutDeviceSelectModal
-                :kind-id="currentDeviceKindId"
-                :selected-devices="selectedDevices"
-                @close-modal="closeModal"
-                @device-add="addDevice"
-                @device-delete="deleteDevice"
-              />
+:kind-id="currentDeviceKindId" :selected-devices="selectedDevices"
+                @close-modal="closeModal" @device-add="addDevice" @device-delete="deleteDevice" />
             </div>
             <CheckoutDeviceKindTable
-              :cart="devicesInCart"
-              @device-kinds-delete="deleteDeviceKinds"
-              @device-kind-link-click="openModalForDeviceId"
-            />
+:cart="devicesInCart" @device-kinds-delete="deleteDeviceKinds"
+              @device-kind-link-click="openModalForDeviceId" />
           </div>
         </div>
         <div class="flex flex-col gap-8 min-w-[350px]">
@@ -328,22 +319,13 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
               <h2 class="text-xl">Người trả</h2>
               <button
                 class="bg-slate-100 border border-slate-400 text-slate-dark rounded-md flex items-center gap-2 p-2"
-                @click="handleScanQrClick"
-              >
-                <Icon
-                  aria-hidden
-                  class="left-3 top-[13px] text-xl"
-                  name="i-heroicons-qr-code"
-                />
+                @click="handleScanQrClick">
+                <Icon aria-hidden class="left-3 top-[13px] text-xl" name="i-heroicons-qr-code" />
                 <p>Quét mã người trả</p>
               </button>
 
               <!-- One-time QR code modal -->
-              <OneTimeQrModal
-                :is-open="showQrModal"
-                :user-id="formState.userId"
-                @close="showQrModal = false"
-              />
+              <OneTimeQrModal :is-open="showQrModal" :user-id="formState.userId" @close="showQrModal = false" />
             </div>
             <div role="form">
               <div class="mb-4">
@@ -352,12 +334,9 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
                     Mã số sinh viên <span class="text-red-500">*</span>
                   </label>
                   <Input
-                    :model-value="formState.userId"
-                    @update:model-value="
-                      (value) => (formState.userId = value.toString())
-                    "
-                    class="text-lg"
-                  />
+:model-value="formState.userId" class="text-lg" @update:model-value="
+                    (value) => (formState.userId = value.toString())
+                  " />
                 </div>
                 <div v-if="/^\d{7}$/.test(formState.userId)" class="text-lg">
                   {{ userInfo.fullName }} | {{ userInfo.translatedRole }}
@@ -374,13 +353,13 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
                     Mã đơn:
                     <span class="font-semibold text-blue-600">{{
                       formState.receiptCode
-                    }}</span>
+                      }}</span>
                   </div>
                   <div>
                     Ngày trả:
                     <span class="font-semibold text-blue-600">{{
                       formState.returnDate.toISOString().substr(0, 10)
-                    }}</span>
+                      }}</span>
                   </div>
                 </div>
               </div>
@@ -388,9 +367,8 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
           </div>
           <div class="flex justify-end">
             <button
-              class="bg-tertiary-darker text-normal text-white rounded-md p-2 px-4 w-full"
-              @click="submitReturnForm"
-            >
+class="bg-tertiary-darker text-normal text-white rounded-md p-2 px-4 w-full"
+              @click="submitReturnForm">
               Xác nhận trả
             </button>
           </div>

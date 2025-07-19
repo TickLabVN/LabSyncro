@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronDown } from "lucide-vue-next";
+import { ChevronDown } from 'lucide-vue-next';
 
 const { data, signOut } = useAuth();
 const { hasPermission, hasRole } = usePermission();
@@ -17,7 +17,7 @@ const { hasPermission, hasRole } = usePermission();
               class="h-[100%] aspect-auto inline-block rounded-full"
               :src="data?.user?.image || ''"
               alt="User's avatar"
-            />
+            >
             <div
               class="w-3 h-3 absolute bg-safe-darker rounded-full z-50 border-white border-[2px] top-6 right-[-2px]"
               aria-hidden
@@ -34,7 +34,7 @@ const { hasPermission, hasRole } = usePermission();
               :src="data?.user?.image || ''"
               class="h-full w-full rounded-full"
               alt="User's avatar"
-            />
+            >
           </div>
           <div class="flex flex-col">
             <span class="text-md font-medium">{{ data?.user?.name }}</span>

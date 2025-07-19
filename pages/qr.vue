@@ -5,12 +5,12 @@ import {
   Share2,
   RefreshCw,
   ArrowLeft,
-} from "lucide-vue-next";
-import { useToast } from "vue-toastification";
+} from 'lucide-vue-next';
+import { useToast } from 'vue-toastification';
 
 definePageMeta({
-  middleware: ["permission"],
-  layout: "qr",
+  middleware: ['permission'],
+  layout: 'qr',
 });
 
 const toast = useToast();
@@ -28,7 +28,7 @@ const isMobile = ref(false);
 async function initializeQR() {
   if (!userId.value) {
     const toast = useToast();
-    toast.error("Không có ID người dùng. Vui lòng đăng nhập và thử lại.");
+    toast.error('Không có ID người dùng. Vui lòng đăng nhập và thử lại.');
     return;
   }
 
@@ -41,24 +41,24 @@ async function initializeQR() {
       startCountdown();
     }
   } catch (error) {
-    toast.error("Có lỗi xảy ra khi tạo mã QR. Vui lòng thử lại.");
+    toast.error('Có lỗi xảy ra khi tạo mã QR. Vui lòng thử lại.');
   }
 }
 
 onMounted(() => {
   checkIsMobile();
-  window.addEventListener("resize", checkIsMobile);
+  window.addEventListener('resize', checkIsMobile);
   initializeQR();
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", checkIsMobile);
+  window.removeEventListener('resize', checkIsMobile);
   cleanUp();
 });
 
 const router = useRouter();
 router.beforeEach((to, from, next) => {
-  if (from.path === "/qr" || (to.path === "/qr" && from.path !== "/qr")) {
+  if (from.path === '/qr' || (to.path === '/qr' && from.path !== '/qr')) {
     cleanUp();
   }
   next();
@@ -84,7 +84,7 @@ watch(
 function downloadQR() {
   if (!qrDataUrl.value) return;
 
-  const link = document.createElement("a");
+  const link = document.createElement('a');
   link.href = qrDataUrl.value;
   link.download = `qr-code-${Date.now()}.png`;
   document.body.appendChild(link);
@@ -95,19 +95,19 @@ function downloadQR() {
 function shareQR() {
   if (!qrDataUrl.value || !navigator.share) {
     const toast = useToast();
-    toast.info("Tính năng chia sẻ không được hỗ trợ trên trình duyệt này");
+    toast.info('Tính năng chia sẻ không được hỗ trợ trên trình duyệt này');
     return;
   }
 
   navigator
     .share({
-      title: "Mã QR xác thực của tôi",
-      text: "Đây là mã QR dùng một lần để xác thực danh tính của tôi",
+      title: 'Mã QR xác thực của tôi',
+      text: 'Đây là mã QR dùng một lần để xác thực danh tính của tôi',
       url: window.location.href,
     })
     .catch(() => {
       const toast = useToast();
-      toast.error("Không thể chia sẻ mã QR");
+      toast.error('Không thể chia sẻ mã QR');
     });
 }
 </script>
@@ -143,13 +143,13 @@ function shareQR() {
               >
                 <div
                   class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"
-                ></div>
+                />
               </div>
               <div
                 v-else-if="qrDataUrl"
                 class="w-full h-full flex items-center justify-center p-2"
               >
-                <img :src="qrDataUrl" alt="QR Code" class="max-w-full h-full" />
+                <img :src="qrDataUrl" alt="QR Code" class="max-w-full h-full" >
               </div>
               <div v-else class="text-center text-red-500 text-sm">
                 Không thể tạo mã QR. Vui lòng thử lại.
@@ -169,9 +169,9 @@ function shareQR() {
           <Button
             variant="ghost"
             size="sm"
-            @click="initializeQR"
             :disabled="isLoading"
             class="h-8"
+            @click="initializeQR"
           >
             <RefreshCw
               class="h-3.5 w-3.5 mr-1"
@@ -182,16 +182,16 @@ function shareQR() {
         </div>
       </CardContent>
 
-      <div class="border-t border-gray-200 my-2"></div>
+      <div class="border-t border-gray-200 my-2"/>
 
       <CardFooter class="flex justify-between gap-4 p-4">
         <div class="flex gap-2 flex-1">
           <Button
             variant="outline"
             :size="isMobile ? 'icon' : 'default'"
-            @click="downloadQR"
             class="flex-1"
             :disabled="!qrDataUrl || isLoading"
+            @click="downloadQR"
           >
             <Download class="h-4 w-4" :class="{ 'mr-2': !isMobile }" />
             <span v-if="!isMobile">Tải xuống</span>
@@ -199,9 +199,9 @@ function shareQR() {
           <Button
             variant="outline"
             :size="isMobile ? 'icon' : 'default'"
-            @click="shareQR"
             class="flex-1"
             :disabled="!qrDataUrl || isLoading"
+            @click="shareQR"
           >
             <Share2 class="h-4 w-4" :class="{ 'mr-2': !isMobile }" />
             <span v-if="!isMobile">Chia sẻ</span>

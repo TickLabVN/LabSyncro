@@ -1,5 +1,5 @@
 import { getToken } from '#auth';
-import { H3Event } from 'h3';
+import type { H3Event } from 'h3';
 import { FORBIDDEN_CODE } from '~/constants';
 
 export async function requirePermission(event: H3Event, requiredPermission: string | string[]) {

@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { XCircle, CheckCircle } from "lucide-vue-next";
-import { useToast } from "vue-toastification";
-import { authService, laboratoryService } from "~/services";
-import LabSelector from "~/components/app/Auth/LabSelector.vue";
+import { CheckCircle, XCircle } from 'lucide-vue-next';
+import { useToast } from 'vue-toastification';
+import { authService, laboratoryService } from '~/services';
 
 definePageMeta({
-  middleware: ["permission"],
+  middleware: ['permission'],
 });
 
 const route = useRoute();
@@ -16,16 +15,16 @@ const hmiCode = computed(() => route.query.hmiCode as string);
 const isLoading = ref(true);
 const isAuthenticated = ref(false);
 const hasError = ref(false);
-const errorMessage = ref("");
+const errorMessage = ref('');
 
 const goToLogin = () => {
-  router.push("/login");
+  router.push('/login');
 };
 
 onMounted(async () => {
   if (!hmiCode.value) {
     hasError.value = true;
-    errorMessage.value = "No HMI code provided";
+    errorMessage.value = 'No HMI code provided';
     isLoading.value = false;
     return;
   }
@@ -64,7 +63,7 @@ async function handleLabSelection(lab: {
     isLoading.value = false;
   } catch (error: any) {
     toast.error(
-      "Failed to set lab for device: " + (error.data?.message || error.message)
+      'Failed to set lab for device: ' + (error.data?.message || error.message)
     );
     isLoading.value = false;
   }
@@ -76,8 +75,7 @@ async function handleLabSelection(lab: {
     <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-md">
       <div v-if="isLoading" class="text-center">
         <div
-          class="inline-block w-8 h-8 border-4 border-tertiary-darker border-t-transparent rounded-full animate-spin mb-4"
-        ></div>
+          class="inline-block w-8 h-8 border-4 border-tertiary-darker border-t-transparent rounded-full animate-spin mb-4"/>
         <h2 class="text-xl font-semibold text-gray-900">
           {{
             isAuthenticated
@@ -95,16 +93,14 @@ async function handleLabSelection(lab: {
       </div>
 
       <div v-else-if="hasError" class="text-center">
-        <div
-          class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mb-4"
-        >
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mb-4">
           <XCircle class="w-6 h-6 text-red-600" />
         </div>
         <h2 class="text-xl font-semibold text-gray-900">
           Authentication Failed
         </h2>
         <p class="mt-2 text-sm text-gray-500">{{ errorMessage }}</p>
-        <Button @click="goToLogin" class="mt-4 w-full">Return to Login</Button>
+        <Button class="mt-4 w-full" @click="goToLogin">Return to Login</Button>
       </div>
 
       <div v-else-if="isAuthenticated" class="text-center">
@@ -118,9 +114,7 @@ async function handleLabSelection(lab: {
       </div>
 
       <div v-else class="text-center">
-        <div
-          class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 mb-4"
-        >
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 mb-4">
           <CheckCircle class="w-6 h-6 text-green-600" />
         </div>
         <h2 class="text-xl font-semibold text-gray-900">Device Connected!</h2>

@@ -1,0 +1,407 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Action {
+  id          BigInt       @id(map: "action_pkey") @default(autoincrement())
+  created_at  DateTime     @default(now()) @db.Timestamptz(6)
+  name        String       @unique(map: "action_name_key")
+  permissions Permission[]
+
+  @@map("actions")
+}
+
+model Activity {
+  id                                                      String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  type                                                    ActivityType
+  created_at                                              DateTime             @default(now()) @db.Timestamptz(6)
+  note                                                    String?
+  inventory_assessments                                   InventoryAssessment?
+  maintenances                                            Maintenance?
+  receipts_devices_receipts_devices_borrow_idToactivities ReceiptDevice[]      @relation("receipts_devices_borrow_idToactivities")
+  receipts_devices_receipts_devices_return_idToactivities ReceiptDevice[]      @relation("receipts_devices_return_idToactivities")
+  shipments_shipments_from_atToactivities                 Shipment[]           @relation("shipments_from_atToactivities")
+  shipments_shipments_to_atToactivities                   Shipment[]           @relation("shipments_to_atToactivities")
+
+  @@map("activities")
+}
+
+model Category {
+  id           BigInt       @id @default(autoincrement())
+  created_at   DateTime     @default(now()) @db.Timestamptz(6)
+  name         String
+  quantity     BigInt?
+  device_kinds DeviceKind[]
+
+  @@map("categories")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model DeviceKind {
+  created_at                                          DateTime  @default(now()) @db.Timestamptz(6)
+  category_id                                         BigInt?
+  name                                                String?
+  meta                                                Json
+  image                                               Json?
+  brand                                               String?
+  manufacturer                                        String?
+  description                                         String?
+  datasheet                                           String?
+  unit                                                String?
+  price                                               String?
+  deleted_at                                          DateTime? @db.Timestamptz(6)
+  id                                                  String    @id @unique(map: "device_kinds_id__key") @default(dbgenerated("lpad(to_hex(nextval('seq_device_kind_count'::regclass)), 8, '0'::text)"))
+  allowed_borrow_roles                                String[]
+  allowed_view_roles                                  String[]
+  is_borrowable_lab_only                              Boolean   @default(false)
+  categories                                          Category? @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  devices_devices_accessory_for_kind_idTodevice_kinds Device[]  @relation("devices_accessory_for_kind_idTodevice_kinds")
+  devices_devices_kindTodevice_kinds                  Device[]  @relation("devices_kindTodevice_kinds")
+
+  @@map("device_kinds")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model Device {
+  created_at                                               DateTime                    @default(now()) @db.Timestamptz(6)
+  kind                                                     String
+  lab_id                                                   String?                     @db.Uuid
+  deleted_at                                               DateTime?                   @db.Timestamptz(6)
+  status                                                   DeviceStatus                @default(healthy)
+  id                                                       String                      @id @unique(map: "devices_id__key") @default(dbgenerated("to_hex(nextval('seq_devices_id'::regclass))"))
+  full_id                                                  String                      @unique @default(dbgenerated("((kind || '/'::text) || id)"))
+  printed_at                                               DateTime?                   @db.Timestamptz(6)
+  accessory_for_kind_id                                    String?
+  device_kinds_devices_accessory_for_kind_idTodevice_kinds DeviceKind?                 @relation("devices_accessory_for_kind_idTodevice_kinds", fields: [accessory_for_kind_id], references: [id])
+  device_kinds_devices_kindTodevice_kinds                  DeviceKind                  @relation("devices_kindTodevice_kinds", fields: [kind], references: [id])
+  labs                                                     Lab?                        @relation(fields: [lab_id], references: [id])
+  inventory_assessments_devices                            InventoryAssessmentDevice[]
+  maintenances_devices                                     MaintenanceDevice[]
+  receipts_devices                                         ReceiptDevice[]
+  shipments_devices                                        ShipmentDevice[]
+
+  @@index([id, deleted_at], map: "idx_devices_id_deleted")
+  @@index([id, lab_id], map: "idx_devices_id_lab_id")
+  @@index([kind, deleted_at], map: "idx_devices_kind")
+  @@map("devices")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model HMICode {
+  code       BigInt    @id @default(autoincrement())
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  user_id    String?
+  auth_token String?
+  status     String    @default("pending")
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+  expires_at DateTime? @db.Timestamptz(6)
+  lab_id     String?   @db.Uuid
+  labs       Lab?      @relation(fields: [lab_id], references: [id])
+  users      User?     @relation(fields: [user_id], references: [id])
+
+  @@map("hmi_codes")
+}
+
+model InventoryAssessment {
+  id                            String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  finished_at                   DateTime?                   @db.Timestamptz(6)
+  lab_id                        String                      @db.Uuid
+  accountant_id                 String?
+  status                        AssessmentStatus
+  users                         User?                       @relation(fields: [accountant_id], references: [id], onDelete: Restrict)
+  activities                    Activity                    @relation(fields: [id], references: [id], onUpdate: Restrict)
+  labs                          Lab                         @relation(fields: [lab_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  inventory_assessments_devices InventoryAssessmentDevice[]
+
+  @@map("inventory_assessments")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model InventoryAssessmentDevice {
+  id                    String               @id(map: "inventory_asessments_devices_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  prev_status           DeviceStatus?
+  after_status          DeviceStatus?
+  assessing_id          String?              @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  device_id             String?
+  inventory_assessments InventoryAssessment? @relation(fields: [assessing_id], references: [id], map: "inventory_asessments_devices_assessing_id_fkey")
+  devices               Device?              @relation(fields: [device_id], references: [id], map: "inventory_asessments_devices_device_id_fkey")
+
+  @@map("inventory_assessments_devices")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Lab {
+  id                                      String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at                              DateTime              @default(now()) @db.Timestamptz(6)
+  name                                    String?
+  faculty                                 String?
+  room                                    String?
+  branch                                  String?
+  timetable                               Json
+  admin_id                                String?
+  deleted_at                              DateTime?             @db.Timestamptz(6)
+  devices                                 Device[]
+  hmi_codes                               HMICode[]
+  inventory_assessments                   InventoryAssessment[]
+  users                                   User?                 @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+  maintenances                            Maintenance[]
+  receipts                                Receipt[]
+  receipts_devices                        ReceiptDevice[]
+  shipments_shipments_arrive_lab_idTolabs Shipment[]            @relation("shipments_arrive_lab_idTolabs")
+  shipments_shipments_start_lab_idTolabs  Shipment[]            @relation("shipments_start_lab_idTolabs")
+
+  @@map("labs")
+}
+
+model Maintenance {
+  id                   String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  status               MaintenanceStatus
+  maintainer_id        String?
+  finished_at          DateTime?           @db.Timestamptz(6)
+  lab_id               String              @db.Uuid
+  activities           Activity            @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_maintenances_activities")
+  labs                 Lab                 @relation(fields: [lab_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                User?               @relation(fields: [maintainer_id], references: [id], onDelete: Restrict)
+  maintenances_devices MaintenanceDevice[]
+
+  @@map("maintenances")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model MaintenanceDevice {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  prev_status    DeviceStatus?
+  after_status   DeviceStatus?
+  maintaining_id String        @db.Uuid
+  device_id      String?
+  devices        Device?       @relation(fields: [device_id], references: [id])
+  maintenance    Maintenance   @relation(fields: [maintaining_id], references: [id], onDelete: SetNull)
+
+  @@map("maintenances_devices")
+}
+
+model Permission {
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  role_id     BigInt
+  resource_id BigInt
+  action_id   BigInt
+  priority    Int      @default(0) @db.SmallInt
+  actions     Action   @relation(fields: [action_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "permission_action_id_fkey")
+  resources   Resource @relation(fields: [resource_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "permission_resource_id_fkey")
+  roles       Role     @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "permission_role_id_fkey")
+
+  @@id([role_id, resource_id, action_id], map: "permission_pkey")
+  @@map("permissions")
+}
+
+model Receipt {
+  id                                                              String          @id
+  actor_id                                                        String
+  checker_id                                                      String
+  lab_id                                                          String          @db.Uuid
+  users_receipts_actor_idTousers                                  User            @relation("receipts_actor_idTousers", fields: [actor_id], references: [id])
+  users_receipts_checker_idTousers                                User            @relation("receipts_checker_idTousers", fields: [checker_id], references: [id])
+  labs                                                            Lab             @relation(fields: [lab_id], references: [id], onDelete: SetNull)
+  receipts_devices_receipts_devices_borrowed_receipt_idToreceipts ReceiptDevice[] @relation("receipts_devices_borrowed_receipt_idToreceipts")
+  receipts_devices_receipts_devices_returned_receipt_idToreceipts ReceiptDevice[] @relation("receipts_devices_returned_receipt_idToreceipts")
+
+  @@map("receipts")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model ReceiptDevice {
+  borrowed_receipt_id                                     String
+  device_id                                               String
+  prev_quality                                            DeviceStatus?
+  borrow_id                                               String?       @db.Uuid
+  return_id                                               String?       @db.Uuid
+  expected_returned_at                                    DateTime      @db.Timestamptz(6)
+  id                                                      String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  expected_returned_lab_id                                String?       @db.Uuid
+  after_quality                                           DeviceStatus?
+  returned_receipt_id                                     String?
+  activities_receipts_devices_borrow_idToactivities       Activity?     @relation("receipts_devices_borrow_idToactivities", fields: [borrow_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_receipts_devices_borrow_activities")
+  activities_receipts_devices_return_idToactivities       Activity?     @relation("receipts_devices_return_idToactivities", fields: [return_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_receipts_devices_return_activities")
+  receipts_receipts_devices_borrowed_receipt_idToreceipts Receipt       @relation("receipts_devices_borrowed_receipt_idToreceipts", fields: [borrowed_receipt_id], references: [id], onDelete: SetNull)
+  devices                                                 Device        @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  labs                                                    Lab?          @relation(fields: [expected_returned_lab_id], references: [id])
+  receipts_receipts_devices_returned_receipt_idToreceipts Receipt?      @relation("receipts_devices_returned_receipt_idToreceipts", fields: [returned_receipt_id], references: [id])
+
+  @@map("receipts_devices")
+}
+
+model Resource {
+  id          BigInt       @id(map: "resource_pkey") @default(autoincrement())
+  created_at  DateTime     @default(now()) @db.Timestamptz(6)
+  name        String       @unique(map: "resource_name_key")
+  type        String?
+  permissions Permission[]
+
+  @@map("resources")
+}
+
+model Role {
+  id          BigInt       @id(map: "role_pkey") @default(autoincrement())
+  created_at  DateTime     @default(now()) @db.Timestamptz(6)
+  key         String       @unique(map: "role_name_key")
+  name        String?
+  permissions Permission[]
+  user_roles  UserRole[]
+
+  @@map("roles")
+}
+
+model Shipment {
+  id                                       String           @id
+  sender_id                                String?
+  receiver_id                              String?
+  status                                   ShipmentStatus
+  start_lab_id                             String           @db.Uuid
+  arrive_lab_id                            String           @db.Uuid
+  from_at                                  String?          @db.Uuid
+  to_at                                    String?          @db.Uuid
+  check_at_destination                     Boolean?         @default(false)
+  labs_shipments_arrive_lab_idTolabs       Lab              @relation("shipments_arrive_lab_idTolabs", fields: [arrive_lab_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  activities_shipments_from_atToactivities Activity?        @relation("shipments_from_atToactivities", fields: [from_at], references: [id])
+  users_shipments_receiver_idTousers       User?            @relation("shipments_receiver_idTousers", fields: [receiver_id], references: [id], onDelete: Restrict)
+  users_shipments_sender_idTousers         User?            @relation("shipments_sender_idTousers", fields: [sender_id], references: [id], onDelete: Restrict)
+  labs_shipments_start_lab_idTolabs        Lab              @relation("shipments_start_lab_idTolabs", fields: [start_lab_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  activities_shipments_to_atToactivities   Activity?        @relation("shipments_to_atToactivities", fields: [to_at], references: [id])
+  shipments_devices                        ShipmentDevice[]
+
+  @@map("shipments")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model ShipmentDevice {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  prev_status  DeviceStatus?
+  after_status DeviceStatus?
+  shipment_id  String
+  device_id    String?
+  devices      Device?       @relation(fields: [device_id], references: [id])
+  shipments    Shipment      @relation(fields: [shipment_id], references: [id], onDelete: SetNull)
+
+  @@map("shipments_devices")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model UsedQRTokens {
+  id         BigInt   @id @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  token      String
+  user_id    String
+  users      User     @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@unique([token, user_id], map: "unique_token_user")
+  @@map("used_qr_tokens")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model UserRole {
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  user_id    String
+  role_id    BigInt
+  roles      Role     @relation(fields: [role_id], references: [id], onDelete: SetNull, map: "user_role_role_id_fkey")
+  users      User     @relation(fields: [user_id], references: [id])
+
+  @@id([user_id, role_id], map: "user_role_pkey")
+  @@map("user_roles")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model User {
+  id                                     String                @id(map: "user_pkey")
+  created_at                             DateTime              @default(now()) @db.Timestamptz(6)
+  name                                   String
+  meta                                   Json
+  email                                  String?               @unique(map: "user_email_key")
+  password                               String?
+  image                                  String?
+  tel                                    String?
+  deleted_at                             DateTime?             @db.Timestamptz(6)
+  last_active_at                         DateTime?             @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+  hmi_codes                              HMICode[]
+  inventory_assessments                  InventoryAssessment[]
+  labs                                   Lab[]
+  maintenances                           Maintenance[]
+  receipts_receipts_actor_idTousers      Receipt[]             @relation("receipts_actor_idTousers")
+  receipts_receipts_checker_idTousers    Receipt[]             @relation("receipts_checker_idTousers")
+  shipments_shipments_receiver_idTousers Shipment[]            @relation("shipments_receiver_idTousers")
+  shipments_shipments_sender_idTousers   Shipment[]            @relation("shipments_sender_idTousers")
+  used_qr_tokens                         UsedQRTokens[]
+  user_roles                             UserRole[]
+
+  @@map("users")
+}
+
+enum ActivityType {
+  borrow
+  return
+  maintenance
+  shipment
+  assessment
+
+  @@map("activity_type")
+}
+
+enum AssessmentStatus {
+  assessing
+  completed
+  cancelled
+
+  @@map("assessment_status")
+}
+
+enum DeviceStatus {
+  healthy
+  broken
+  discarded
+  assessing
+  maintaining
+  shipping
+  borrowing
+  lost
+
+  @@map("device_status")
+}
+
+enum MaintenanceStatus {
+  maintaining
+  completed
+  cancelled
+
+  @@map("maintenance_status")
+}
+
+enum RequestStatus {
+  pending
+  approved
+  rejected
+  cancelled
+
+  @@map("request_status")
+}
+
+enum ReservationStatus {
+  pending
+  approved
+  ready
+  cancelled
+
+  @@map("reservation_status")
+}
+
+enum ShipmentStatus {
+  shipping
+  completed
+  cancelled
+
+  @@map("shipment_status")
+}

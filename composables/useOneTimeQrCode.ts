@@ -64,7 +64,7 @@ export function useOneTimeQrCode() {
 
       code = code % Math.pow(10, TOTP_CONFIG.digits);
 
-      return code.toString().padStart(TOTP_CONFIG.digits, "0");
+      return code.toString().padStart(TOTP_CONFIG.digits, '0');
     } catch (error) {
       toast.error(`Lỗi khi tạo mã QR: ${error}`);
       throw error;
@@ -181,13 +181,13 @@ export function useOneTimeQrCode() {
       const { token, userId, timestamp, expiry, ...extraData } = qrData;
       
       if (Date.now() > expiry) {
-        toast.error("Mã QR đã hết hạn");
+        toast.error('Mã QR đã hết hạn');
         return null;
       }
 
       const isValid = await verifyToken(token, userId);
       if (!isValid) {
-        toast.error("Mã QR không hợp lệ");
+        toast.error('Mã QR không hợp lệ');
         return null;
       }
 
@@ -200,9 +200,9 @@ export function useOneTimeQrCode() {
         };
       } catch (error: any) {
         if (error.statusCode === 403) {
-          toast.error("Mã QR đã được sử dụng");
+          toast.error('Mã QR đã được sử dụng');
         } else {
-          toast.error("Lỗi khi xác thực mã QR");
+          toast.error('Lỗi khi xác thực mã QR');
         }
         return null;
       }
