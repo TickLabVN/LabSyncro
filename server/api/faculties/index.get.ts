@@ -1,8 +1,8 @@
-import { FacultyResourceDto } from '~/lib/api_schema';
-import * as db from 'zapatos/db';
-import { dbPool } from '~/server/db';
 import { Value } from '@sinclair/typebox/value';
-import { INTERNAL_SERVER_ERROR_CODE } from '~/constants';
+import * as db from 'zapatos/db';
+import { INTERNAL_SERVER_ERROR_CODE } from '~/server/constants';
+import { dbPool } from '~/server/db';
+import { FacultyResourceDto } from '~/shared/schemas';
 
 export default defineEventHandler<Promise<FacultyResourceDto>>(async () => {
   const faculties = (await db.sql`

@@ -1,6 +1,6 @@
 import { getToken } from '#auth';
 import type { H3Event } from 'h3';
-import { FORBIDDEN_CODE } from '~/constants';
+import { FORBIDDEN_CODE } from '~/server/constants';
 
 export async function requirePermission(event: H3Event, requiredPermission: string | string[]) {
   const token = await getToken({ event });

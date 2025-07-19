@@ -1,8 +1,8 @@
-import * as db from 'zapatos/db';
-import { dbPool } from '~/server/db';
-import { Value } from '@sinclair/typebox/value';
 import { Type, type Static } from '@sinclair/typebox';
-import { BAD_REQUEST_CODE } from '~/constants';
+import { Value } from '@sinclair/typebox/value';
+import * as db from 'zapatos/db';
+import { BAD_REQUEST_CODE } from '~/server/constants';
+import { dbPool } from '~/server/db';
 
 const BodyDto = Type.Array(
   Type.Object({

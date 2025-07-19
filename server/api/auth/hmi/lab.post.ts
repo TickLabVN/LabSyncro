@@ -1,7 +1,7 @@
-import * as db from 'zapatos/db';
 import { Type, type Static } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
-import { BAD_REQUEST_CODE, NOT_FOUND_CODE, INTERNAL_SERVER_ERROR_CODE } from '~/constants';
+import * as db from 'zapatos/db';
+import { BAD_REQUEST_CODE, INTERNAL_SERVER_ERROR_CODE, NOT_FOUND_CODE } from '~/server/constants';
 import { dbPool } from '~/server/db';
 
 const BodyDto = Type.Object({
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
         message: 'Bad request: Invalid body'
       });
     }
-    
+
     const { hmiCode, labId } = body;
 
     if (!/^\d{6}$/.test(hmiCode)) {
@@ -29,42 +29,42 @@ export default defineEventHandler(async (event) => {
         message: 'Bad request: Invalid HMI code format'
       });
     }
-    
+
     const hmiCodeResult = await db.sql`
       SELECT code, status, user_id, auth_token, expires_at 
       FROM hmi_codes 
       WHERE code = ${db.param(hmiCode)}
     `.run(dbPool);
-    
+
     if (hmiCodeResult.length === 0) {
       throw createError({
         statusCode: NOT_FOUND_CODE,
         message: 'HMI code not found'
       });
     }
-    
+
     const hmiCodeData = hmiCodeResult[0];
-    
+
     if (new Date(hmiCodeData.expires_at) < new Date()) {
       throw createError({
         statusCode: BAD_REQUEST_CODE,
         message: 'HMI code has expired'
       });
     }
-    
+
     if (hmiCodeData.status !== 'success') {
       throw createError({
         statusCode: BAD_REQUEST_CODE,
         message: `HMI code is not in success status (current status: ${hmiCodeData.status})`
       });
     }
-    
+
     const labResult = await db.sql`
       SELECT id 
       FROM labs
       WHERE id = ${db.param(labId)}
     `.run(dbPool);
-    
+
     if (labResult.length === 0) {
       throw createError({
         statusCode: NOT_FOUND_CODE,
@@ -79,7 +79,7 @@ export default defineEventHandler(async (event) => {
         updated_at = NOW() 
       WHERE code = ${db.param(hmiCode)}
     `.run(dbPool);
-    
+
     return {
       success: true,
       message: 'Lab selection saved successfully'
@@ -88,7 +88,7 @@ export default defineEventHandler(async (event) => {
     if (error.statusCode) {
       throw error;
     }
-    
+
     throw createError({
       statusCode: INTERNAL_SERVER_ERROR_CODE,
       message: 'Internal server error'

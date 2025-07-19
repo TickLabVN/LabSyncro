@@ -1,11 +1,11 @@
-import * as db from 'zapatos/db';
-import { dbPool } from '~/server/db';
-import { BorrowedReceiptResourceDto } from '~/lib/api_schema';
+import { getToken } from '#auth';
+import type { Static } from '@sinclair/typebox';
 import { Type } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
-import type { Static } from '@sinclair/typebox';
-import { INTERNAL_SERVER_ERROR_CODE, BAD_REQUEST_CODE } from '~/constants';
-import { getToken } from '#auth';
+import * as db from 'zapatos/db';
+import { BAD_REQUEST_CODE, INTERNAL_SERVER_ERROR_CODE } from '~/server/constants';
+import { dbPool } from '~/server/db';
+import { BorrowedReceiptResourceDto } from '~/shared/schemas';
 
 const QueryDto = Type.Object({
   offset: Type.Number(),
@@ -122,24 +122,22 @@ export default defineEventHandler<
       expected_returned_at,
       status
     FROM borrowed_devices
-    ${
-    searchText !== undefined && searchFields?.length
-      ? db.sql`WHERE (
+    ${searchText !== undefined && searchFields?.length
+        ? db.sql`WHERE (
         (${db.param(searchFields.includes('device_kind_id'))} AND device_kind_id ILIKE ${db.param(`%${searchText}%`)}) OR
         (${db.param(searchFields.includes('device_kind_name'))} AND strip_vietnamese_accents(device_kind_name) ILIKE strip_vietnamese_accents(${db.param(`%${searchText}%`)})) OR
         (${db.param(searchFields.includes('borrowed_place'))} AND strip_vietnamese_accents(borrowed_place) ILIKE strip_vietnamese_accents(${db.param(`%${searchText}%`)})) OR
         (${db.param(searchFields.includes('returned_place'))} AND strip_vietnamese_accents(returned_place) ILIKE strip_vietnamese_accents(${db.param(`%${searchText}%`)}))
       )`
-      : db.raw('')
-    }
+        : db.raw('')
+      }
     ORDER BY 
-      ${
-    sortField
-      ? db.raw(
-        `${sortField} ${desc ? 'DESC' : 'ASC'}, expected_returned_at ASC, borrowed_at DESC`,
-      )
-      : db.raw('expected_returned_at ASC, borrowed_at DESC')
-    }    
+      ${sortField
+        ? db.raw(
+          `${sortField} ${desc ? 'DESC' : 'ASC'}, expected_returned_at ASC, borrowed_at DESC`,
+        )
+        : db.raw('expected_returned_at ASC, borrowed_at DESC')
+      }    
     LIMIT ${db.param(length)}
     OFFSET ${db.param(offset)}
     `.run(dbPool)
@@ -180,16 +178,15 @@ export default defineEventHandler<
     WHERE 
       r_borrow.${'actor_id'} = ${db.param(userId)}
       AND rd.${'return_id'} IS NULL
-      ${
-  searchText !== undefined && searchFields?.length
-    ? db.sql`AND (
+      ${searchText !== undefined && searchFields?.length
+      ? db.sql`AND (
         (${db.param(searchFields.includes('device_kind_id'))} AND dk.${'id'} ILIKE ${db.param(`%${searchText}%`)}) OR
         (${db.param(searchFields.includes('device_kind_name'))} AND strip_vietnamese_accents(dk.${'name'}) ILIKE strip_vietnamese_accents(${db.param(`%${searchText}%`)})) OR
         (${db.param(searchFields.includes('borrowed_place'))} AND strip_vietnamese_accents(CONCAT(l_borrow.${'room'}, ', ', l_borrow.${'branch'})) ILIKE strip_vietnamese_accents(${db.param(`%${searchText}%`)})) OR
         (${db.param(searchFields.includes('returned_place'))} AND l_expected.${'id'} IS NOT NULL AND strip_vietnamese_accents(CONCAT(l_expected.${'room'}, ', ', l_expected.${'branch'})) ILIKE strip_vietnamese_accents(${db.param(`%${searchText}%`)}))
       )`
-    : db.raw('')
-}
+      : db.raw('')
+    }
   `.run(dbPool);
 
   const totalPages = Math.ceil(totalRecords / length);

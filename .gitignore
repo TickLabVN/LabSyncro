@@ -11,4 +11,4 @@ zapatos/
 docs
 tasks
 .vscode
-/lib/generated/prisma
+/server/datasources/prisma

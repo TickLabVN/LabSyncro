@@ -1,14 +1,14 @@
-import * as db from 'zapatos/db';
-import {
-  INTERNAL_SERVER_ERROR_CODE,
-  NOT_FOUND_CODE,
-  BAD_REQUEST_CODE,
-} from '~/constants';
-import { dbPool } from '~/server/db';
-import { DeviceKindResourceDto } from '~/lib/api_schema';
+import type { Static } from '@sinclair/typebox';
 import { Type } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
-import type { Static } from '@sinclair/typebox';
+import * as db from 'zapatos/db';
+import {
+  BAD_REQUEST_CODE,
+  INTERNAL_SERVER_ERROR_CODE,
+  NOT_FOUND_CODE,
+} from '~/server/constants';
+import { dbPool } from '~/server/db';
+import { DeviceKindResourceDto } from '~/shared/schemas';
 
 const QueryDto = Type.Object({ lab_id: Type.Optional(Type.String()) });
 type QueryDto = Static<typeof QueryDto>;

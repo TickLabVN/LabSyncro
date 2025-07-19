@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
+  output   = "../server/datasources/prisma"
 }
 
 datasource db {
@@ -242,7 +242,7 @@ model User {
   id       String     @id(map: "user_pkey")
   name     String
   meta     Json
-  email    String?    @unique
+  email    String     @unique
   password String?
   avatar   String?
   tel      String?
@@ -257,9 +257,9 @@ model User {
   usedQrTokens                           UsedQRTokens[]
   receipts                               Receipt[]
 
-  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdAt    DateTime  @default(now()) @map("created_at")
   deletedAt    DateTime? @map("deleted_at")
-  lastActiveAt DateTime? @map("last_activate_at")
+  lastActiveAt DateTime  @default(now()) @map("last_activate_at")
 
   @@map("users")
 }

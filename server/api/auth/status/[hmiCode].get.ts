@@ -1,7 +1,7 @@
-import * as db from 'zapatos/db';
-import { BAD_REQUEST_CODE, NOT_FOUND_CODE, INTERNAL_SERVER_ERROR_CODE } from '~/constants';
-import { dbPool } from '~/server/db';
 import { Type, type Static } from '@sinclair/typebox';
+import * as db from 'zapatos/db';
+import { BAD_REQUEST_CODE, INTERNAL_SERVER_ERROR_CODE, NOT_FOUND_CODE } from '~/server/constants';
+import { dbPool } from '~/server/db';
 
 const ResponseSuccessDto = Type.Object({
   status: Type.Literal('success'),
@@ -31,7 +31,7 @@ type ResponsePendingDto = Static<typeof ResponsePendingDto>;
 export default defineEventHandler(async (event) => {
   try {
     const hmiCode = getRouterParam(event, 'hmiCode');
-    
+
     if (!hmiCode) {
       throw createError({
         statusCode: BAD_REQUEST_CODE,
@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
         message: 'Bad request: Invalid HMI code format'
       });
     }
-    
+
     const hmiCodeResult = await db.sql`
       SELECT 
         hc.code, 
@@ -89,16 +89,16 @@ export default defineEventHandler(async (event) => {
         u.email,
         u.image
     `.run(dbPool);
-    
+
     if (hmiCodeResult.length === 0) {
       throw createError({
         statusCode: NOT_FOUND_CODE,
         message: 'HMI code not found or expired'
       });
     }
-    
+
     const hmiCodeData = hmiCodeResult[0];
-    
+
     if (new Date(hmiCodeData.expires_at) < new Date()) {
       throw createError({
         statusCode: NOT_FOUND_CODE,
@@ -136,13 +136,13 @@ export default defineEventHandler(async (event) => {
           roles: hmiCodeData.roles
         };
       }
-      
+
       return response;
     } else if (hmiCodeData.status === 'pending') {
       const response: ResponsePendingDto = {
         status: 'pending'
       };
-      
+
       return response;
     } else {
       throw createError({
@@ -154,7 +154,7 @@ export default defineEventHandler(async (event) => {
     if (error.statusCode) {
       throw error;
     }
-    
+
     throw createError({
       statusCode: INTERNAL_SERVER_ERROR_CODE,
       message: 'Internal server error'

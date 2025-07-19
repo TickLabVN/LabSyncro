@@ -1,9 +1,9 @@
-import * as db from 'zapatos/db';
-import { dbPool } from '~/server/db';
 import { getToken } from '#auth';
-import { Value } from '@sinclair/typebox/value';
 import { Type, type Static } from '@sinclair/typebox';
-import { BAD_REQUEST_CODE } from '~/constants';
+import { Value } from '@sinclair/typebox/value';
+import * as db from 'zapatos/db';
+import { BAD_REQUEST_CODE } from '~/server/constants';
+import { dbPool } from '~/server/db';
 
 const BodyDto = Type.Object({
   receipt_id: Type.Optional(Type.String()),
@@ -77,7 +77,7 @@ export default defineEventHandler<
         message: 'Bad request: Only healthy devices can be borrowed',
       });
     }
-    
+
     if (expectedReturnDate.getTime() - borrowDate.getTime() <= 0) {
       throw createError({
         statusCode: BAD_REQUEST_CODE,

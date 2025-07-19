@@ -1,5 +1,5 @@
 import pg from 'pg';
-import { PrismaClient } from '~/lib/generated/prisma';
+import { PrismaClient } from '~/server/datasources/prisma';
 
 const { DATABASE_HOST, DATABASE_USER, DATABASE_PORT, DATABASE_NAME, DATABASE_PASSWORD } = useRuntimeConfig();
 

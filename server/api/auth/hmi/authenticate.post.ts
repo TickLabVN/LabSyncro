@@ -1,10 +1,10 @@
-import * as db from 'zapatos/db';
+import { getToken } from '#auth';
 import { Type, type Static } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
-import { BAD_REQUEST_CODE, NOT_FOUND_CODE, INTERNAL_SERVER_ERROR_CODE } from '~/constants';
-import { dbPool } from '~/server/db';
-import { getToken } from '#auth';
 import jwt from 'jsonwebtoken';
+import * as db from 'zapatos/db';
+import { BAD_REQUEST_CODE, INTERNAL_SERVER_ERROR_CODE, NOT_FOUND_CODE } from '~/server/constants';
+import { dbPool } from '~/server/db';
 
 const BodyDto = Type.Object({
   hmiCode: Type.String()
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const userId = token.id;
-    
+
     const body = Value.Convert(BodyDto, await readBody(event));
     if (!Value.Check(BodyDto, body)) {
       throw createError({
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
         message: 'Bad request: Invalid body'
       });
     }
-    
+
     const { hmiCode } = body;
 
     if (!/^\d{6}$/.test(hmiCode)) {
@@ -40,47 +40,47 @@ export default defineEventHandler(async (event) => {
         message: 'Bad request: Invalid HMI code format'
       });
     }
-    
+
     const hmiCodeResult = await db.sql`
       SELECT code, status, expires_at 
       FROM hmi_codes 
       WHERE code = ${db.param(hmiCode)}
     `.run(dbPool);
-    
+
     if (hmiCodeResult.length === 0) {
       throw createError({
         statusCode: NOT_FOUND_CODE,
         message: 'HMI code not found'
       });
     }
-    
+
     const hmiCodeData = hmiCodeResult[0];
-    
+
     if (new Date(hmiCodeData.expires_at) < new Date()) {
       throw createError({
         statusCode: BAD_REQUEST_CODE,
         message: 'HMI code has expired'
       });
     }
-    
+
     if (hmiCodeData.status !== 'pending') {
       throw createError({
         statusCode: BAD_REQUEST_CODE,
         message: `HMI code is not in pending status (current status: ${hmiCodeData.status})`
       });
     }
-    
+
     const { JWT_SECRET } = useRuntimeConfig();
     const authToken = jwt.sign(
-      { 
+      {
         id: userId,
         permissions: token.permissions,
         roles: token.roles
-      }, 
-      JWT_SECRET, 
+      },
+      JWT_SECRET,
       { expiresIn: '30d' }
     );
-    
+
     await db.sql`
       UPDATE hmi_codes 
       SET 
@@ -90,7 +90,7 @@ export default defineEventHandler(async (event) => {
         updated_at = NOW() 
       WHERE code = ${db.param(hmiCode)}
     `.run(dbPool);
-    
+
     return {
       success: true,
       message: 'Device authentication successful'
@@ -99,7 +99,7 @@ export default defineEventHandler(async (event) => {
     if (error.statusCode) {
       throw error;
     }
-    
+
     throw createError({
       statusCode: INTERNAL_SERVER_ERROR_CODE,
       message: 'Internal server error'

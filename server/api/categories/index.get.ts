@@ -1,8 +1,8 @@
 import { Value } from '@sinclair/typebox/value';
 import * as db from 'zapatos/db';
-import { INTERNAL_SERVER_ERROR_CODE } from '~/constants';
-import { ListOfCategoryResourceDto } from '~/lib/api_schema';
+import { INTERNAL_SERVER_ERROR_CODE } from '~/server/constants';
 import { dbPool } from '~/server/db';
+import { ListOfCategoryResourceDto } from '~/shared/schemas';
 
 export default defineEventHandler<Promise<ListOfCategoryResourceDto>>(async () => {
   const categories = (await db.select('categories', {}).run(dbPool)).map(({ name, id }) => ({ id: id.toString(), name }));

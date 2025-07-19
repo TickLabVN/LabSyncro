@@ -1,14 +1,14 @@
+import { getToken } from '#auth';
+import { Type, type Static } from '@sinclair/typebox';
+import { Value } from '@sinclair/typebox/value';
 import * as db from 'zapatos/db';
 import {
   BAD_REQUEST_CODE,
   INTERNAL_SERVER_ERROR_CODE,
   NOT_FOUND_CODE,
-} from '~/constants';
+} from '~/server/constants';
 import { dbPool } from '~/server/db';
-import { Type, type Static } from '@sinclair/typebox';
-import { Value } from '@sinclair/typebox/value';
-import { DeviceCheckerResourceDto } from '~/lib/api_schema';
-import { getToken } from '#auth';
+import { DeviceCheckerResourceDto } from '~/shared/schemas';
 
 const BodyDto = Type.Object({
   lab_id: Type.String(),
@@ -105,7 +105,7 @@ export default defineEventHandler<Promise<DeviceCheckerResourceDto>>(
         });
       }
 
-      
+
 
       return {
         id: returnedDevice[0].id,

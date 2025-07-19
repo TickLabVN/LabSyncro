@@ -1,16 +1,16 @@
-import * as db from 'zapatos/db';
-import { dbPool } from '~/server/db';
 import { getToken } from '#auth';
-import { Value } from '@sinclair/typebox/value';
 import { Type, type Static } from '@sinclair/typebox';
-import { BAD_REQUEST_CODE } from '~/constants';
+import { Value } from '@sinclair/typebox/value';
+import * as db from 'zapatos/db';
+import { BAD_REQUEST_CODE } from '~/server/constants';
+import { dbPool } from '~/server/db';
 
 const BodyDto = Type.Object({
-  receipt_id: Type.Optional(Type.String()),
-  device_ids: Type.Array(Type.String()),
-  returner_id: Type.String(),
-  return_date: Type.Date(),
-  return_lab_id: Type.String(),
+  receiptId: Type.Optional(Type.String()),
+  deviceIds: Type.Array(Type.String()),
+  returnerId: Type.String(),
+  returnDate: Type.Date(),
+  returnLabId: Type.String(),
 });
 
 type BodyDto = Static<typeof BodyDto>;
@@ -27,7 +27,7 @@ export default defineEventHandler<
     });
   }
 
-  const { receipt_id: receiptId, device_ids: deviceIds, returner_id: returnerId, return_date: returnDate, return_lab_id: returnLabId } = body;
+  const { receiptId, deviceIds, returnerId, returnDate, returnLabId } = body;
 
   const token = await getToken({ event });
   if (!token) {

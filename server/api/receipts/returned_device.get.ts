@@ -3,9 +3,9 @@ import type { Static } from '@sinclair/typebox';
 import { Type } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
 import * as db from 'zapatos/db';
-import { BAD_REQUEST_CODE } from '~/constants';
-import type { ReturnedReceiptResourceDto } from '~/lib/api_schema';
+import { BAD_REQUEST_CODE } from '~/server/constants';
 import { dbPool } from '~/server/db';
+import type { ReturnedReceiptResourceDto } from '~/shared/schemas';
 
 const QueryDto = Type.Object({
   offset: Type.Number(),

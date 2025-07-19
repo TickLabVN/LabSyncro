@@ -1,6 +1,6 @@
 // import * as db from 'zapatos/db';
-import type { UserResourceDto } from '~/lib/api_schema';
 import { db } from '~/server/db';
+import type { UserResourceDto } from '~/shared/schemas';
 
 export default defineEventHandler<Promise<UserResourceDto[]>>(async (event) => {
   await requirePermission(event, '/settings/users:own');
@@ -12,16 +12,11 @@ export default defineEventHandler<Promise<UserResourceDto[]>>(async (event) => {
       name: true,
       email: true,
       tel: true,
-      image: true,
+      avatar: true,
       lastActiveAt: true,
       roles: true,
     },
-    orderBy: {
-      lastActiveAt: {
-        sort: 'desc',
-        nulls: 'last',
-      },
-    },
+    orderBy: { lastActiveAt: 'desc' },
   });
 
   return users;

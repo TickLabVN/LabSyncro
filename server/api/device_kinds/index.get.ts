@@ -2,9 +2,9 @@ import type { Static } from '@sinclair/typebox';
 import { Type } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
 import * as db from 'zapatos/db';
-import { BAD_REQUEST_CODE, INTERNAL_SERVER_ERROR_CODE } from '~/constants';
-import { ListOfDeviceKindResourceDto } from '~/lib/api_schema';
+import { BAD_REQUEST_CODE, INTERNAL_SERVER_ERROR_CODE } from '~/server/constants';
 import { dbPool } from '~/server/db';
+import { ListOfDeviceKindResourceDto } from '~/shared/schemas';
 
 const QueryDto = Type.Object({
   category_id: Type.Optional(Type.Number()),
@@ -74,14 +74,13 @@ export default defineEventHandler<
         ${categoryId !== undefined ? db.raw(`device_kinds.category_id = ${categoryId}`) : db.raw('TRUE')} AND 
         ${labId !== undefined ? db.raw(`devices.lab_id = '${labId}'`) : db.raw('TRUE')} AND
         ${'devices'}.${'deleted_at'} IS NULL
-        ${
-  searchText !== undefined
-    ? db.raw(`AND (
+        ${searchText !== undefined
+      ? db.raw(`AND (
           (${searchFields?.includes('device_id') || false} AND strip_vietnamese_accents(devices.kind || '/' || devices.id) ILIKE strip_vietnamese_accents('%${searchText}%')) OR
           (${searchFields?.includes('device_name') || false} AND strip_vietnamese_accents(CAST(device_kinds.name AS TEXT)) ILIKE strip_vietnamese_accents('%${searchText}%'))
         )`)
-    : db.raw('')
-}
+      : db.raw('')
+    }
       GROUP BY ${'device_kinds'}.${'id'}
       ORDER BY ${sortField ? db.raw(`${sortField}`) : db.raw('device_kinds.id')} ${desc ? db.raw('DESC') : db.raw('ASC')}
       LIMIT ${db.param(length)}
@@ -98,14 +97,13 @@ export default defineEventHandler<
       ${labId !== undefined ? db.raw(`devices.lab_id = '${labId}'`) : db.raw('TRUE')} AND
       ${'devices'}.${'deleted_at'} IS NULL AND
       ${'device_kinds'}.${'deleted_at'} IS NULL
-      ${
-  searchText !== undefined
-    ? db.raw(`AND (
+      ${searchText !== undefined
+      ? db.raw(`AND (
         (${searchFields?.includes('device_id') || false} AND strip_vietnamese_accents(CAST(devices.id AS TEXT)) ILIKE strip_vietnamese_accents('%${searchText}%')) OR
         (${searchFields?.includes('device_name') || false} AND strip_vietnamese_accents(CAST(device_kinds.name AS TEXT)) ILIKE strip_vietnamese_accents('%${searchText}%'))
       )`)
-    : db.raw('')
-}
+      : db.raw('')
+    }
     `.run(dbPool);
 
   const totalPages = Math.ceil(totalRecords / length);

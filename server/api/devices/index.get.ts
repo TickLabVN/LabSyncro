@@ -1,9 +1,9 @@
 import { Type, type Static } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
-import { BAD_REQUEST_CODE, INTERNAL_SERVER_ERROR_CODE } from '~/constants';
 import * as db from 'zapatos/db';
+import { BAD_REQUEST_CODE, INTERNAL_SERVER_ERROR_CODE } from '~/server/constants';
 import { dbPool } from '~/server/db';
-import { ListOfDeviceResourceDto } from '~/lib/api_schema';
+import { ListOfDeviceResourceDto } from '~/shared/schemas';
 
 const QueryDto = Type.Object({
   offset: Type.Number(),
@@ -67,13 +67,12 @@ export default defineEventHandler<
       (${deviceKindId !== undefined ? db.param(false) : db.param(true)} OR ${'devices'}.${'kind'} = ${db.param(deviceKindId)}) AND
       ${labId !== undefined ? db.raw(`devices.lab_id = '${labId}'`) : db.raw('TRUE')} AND
       ${'devices'}.${'deleted_at'} IS NULL
-      ${
-  searchText !== undefined
-    ? db.raw(`AND (
+      ${searchText !== undefined
+      ? db.raw(`AND (
           (${searchFields?.includes('device_id') || false} AND strip_vietnamese_accents(devices.kind || '/' || devices.id) ILIKE strip_vietnamese_accents('%${searchText}%'))
         )`)
-    : db.raw('')
-}
+      : db.raw('')
+    }
     ORDER BY ${sortField ? db.raw(`${sortField} ${desc ? 'DESC' : 'ASC'}, `) : db.raw('')} ${'devices'}.${'status'} ASC
     LIMIT ${db.param(length)}
     OFFSET ${db.param(offset)}
@@ -86,13 +85,12 @@ export default defineEventHandler<
       (${deviceKindId !== undefined ? db.param(false) : db.param(true)} OR ${'devices'}.${'kind'} = ${db.param(deviceKindId)}) AND
       ${labId !== undefined ? db.raw(`devices.lab_id = '${labId}'`) : db.raw('TRUE')} AND
       ${'devices'}.${'deleted_at'} IS NULL
-      ${
-  searchText !== undefined
-    ? db.raw(`AND (
+      ${searchText !== undefined
+      ? db.raw(`AND (
           (${searchFields?.includes('device_id') || false} AND strip_vietnamese_accents(devices.id) ILIKE strip_vietnamese_accents('%${searchText}%'))
         )`)
-    : db.raw('')
-}
+      : db.raw('')
+    }
   `.run(dbPool);
 
   const totalPages = Math.ceil(totalRecords / length);
