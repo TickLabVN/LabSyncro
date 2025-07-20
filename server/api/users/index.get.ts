@@ -1,10 +1,11 @@
-// import * as db from 'zapatos/db';
-import { db } from '~/server/db';
-import type { UserResourceDto } from '~/shared/schemas';
+import { Type } from '@sinclair/typebox';
+import { db } from '~~/server/utils/db';
+import { UserResourceDto } from '~~/shared/schemas';
 
-export default defineEventHandler<Promise<UserResourceDto[]>>(async (event) => {
-  await requirePermission(event, '/settings/users:own');
-
+export default defineApi({
+  response: Type.Array(UserResourceDto),
+  roles: ['SYSTEM_ADMIN', 'LAB_ADMIN']
+}, async () => {
   const users = await db.user.findMany({
     where: { deletedAt: null },
     select: {
@@ -18,6 +19,5 @@ export default defineEventHandler<Promise<UserResourceDto[]>>(async (event) => {
     },
     orderBy: { lastActiveAt: 'desc' },
   });
-
   return users;
-}); 
+});

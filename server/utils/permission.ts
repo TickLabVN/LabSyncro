@@ -1,19 +1,15 @@
 import { getToken } from '#auth';
 import type { H3Event } from 'h3';
-import { FORBIDDEN_CODE } from '~/server/constants';
+import type { UserRole } from '../datasources/prisma';
+import { forbidden } from './errors';
 
-export async function requirePermission(event: H3Event, requiredPermission: string | string[]) {
+export async function requireRoles(event: H3Event, roles: UserRole | UserRole[]) {
   const token = await getToken({ event });
   const userPermissions = token?.permissions as string[] || [];
 
-  const hasPermission = Array.isArray(requiredPermission)
-    ? requiredPermission.every(p => userPermissions.includes(p))
-    : userPermissions.includes(requiredPermission);
+  const hasPermission = Array.isArray(roles)
+    ? roles.every(p => userPermissions.includes(p))
+    : userPermissions.includes(roles);
 
-  if (!hasPermission) {
-    throw createError({
-      statusCode: FORBIDDEN_CODE,
-      message: 'Forbidden: Insufficient permissions',
-    });
-  }
+  if (!hasPermission) throw forbidden();
 } 

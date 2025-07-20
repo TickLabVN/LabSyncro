@@ -1,15 +1,16 @@
 import { Type } from '@sinclair/typebox';
-import { Value } from '@sinclair/typebox/value';
-import { NOT_FOUND_CODE } from '~/server/constants';
-import { db } from '~/server/db';
-import type { UserResourceDto } from '~/shared/schemas';
+import { db } from '~~/server/utils/db';
+import { UserResourceDto } from '~~/shared/schemas';
 
-export default defineEventHandler<Promise<UserResourceDto>>(async (event) => {
-  await requirePermission(event, ['/admin/borrows/form:edit', '/admin/returns/form:edit']);
-  const userId = Value.Convert(Type.String(), getRouterParam(event, 'id')) as string;
+export default defineApi({
+  params: Type.Object({
+    id: Type.String()
+  }),
+  response: UserResourceDto
+}, async (event) => {
   const user = await db.user.findUnique({
     where: {
-      id: userId,
+      id: event.routerParams.id,
       deletedAt: null,
     },
     select: {
@@ -23,12 +24,6 @@ export default defineEventHandler<Promise<UserResourceDto>>(async (event) => {
     },
   });
 
-  if (!user) {
-    throw createError({
-      statusCode: NOT_FOUND_CODE,
-      message: 'User not found!',
-    });
-  }
-
+  if (!user) throw notFound('User not found');
   return user;
 });

@@ -6,6 +6,7 @@ export default withNuxt({
     semi: ['error', 'always'],
     indent: ['error', 2],
     quotes: ['error', 'single'],
+    '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': 'warn',
     'space-before-function-paren': ['off'],

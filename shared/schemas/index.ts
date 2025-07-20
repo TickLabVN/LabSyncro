@@ -1,21 +1,6 @@
 import type { Static } from '@sinclair/typebox';
 import { Type } from '@sinclair/typebox';
 
-export const CategoryResourceDto = Type.Object({
-  id: Type.String(),
-  name: Type.String(),
-});
-
-export type CategoryResourceDto = Static<typeof CategoryResourceDto>;
-
-export const ListOfCategoryResourceDto = Type.Object({
-  categories: Type.Any(CategoryResourceDto),
-});
-
-export type ListOfCategoryResourceDto = Static<
-  typeof ListOfCategoryResourceDto
->;
-
 export const FacultyResourceDto = Type.Object({
   faculties: Type.Array(
     Type.Object({
@@ -106,23 +91,6 @@ export const DeviceQuantityByLabDto = Type.Object({
 });
 
 export type DeviceQuantityByLabDto = Static<typeof DeviceQuantityByLabDto>;
-
-export const DeviceKindResourceDto = Type.Object({
-  id: Type.String(),
-  unit: Type.String(),
-  name: Type.String(),
-  brand: Type.Union([Type.String(), Type.Null()]),
-  manufacturer: Type.Union([Type.String(), Type.Null()]),
-  mainImage: Type.String(),
-  subImages: Type.Array(Type.String()),
-  quantity: Type.Number(),
-  borrowableQuantity: Type.Number(),
-  categoryId: Type.String(),
-  categoryName: Type.String(),
-  description: Type.String(),
-});
-
-export type DeviceKindResourceDto = Static<typeof DeviceKindResourceDto>;
 
 export const ListOfDeviceKindResourceDto = Type.Object({
   deviceKinds: Type.Array(

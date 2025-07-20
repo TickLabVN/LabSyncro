@@ -1,11 +1,11 @@
-export const categoryService = {
-  async getCategories (): Promise<{ id: string; name: string }[]> {
+import type { CategoryDto } from '~~/shared/schemas';
+
+export const categorySvc = {
+  async getAll(): Promise<CategoryDto[]> {
     const { $cachedFetch } = useNuxtApp();
-    const { categories } = await $cachedFetch('/api/categories');
-    return categories;
+    return $cachedFetch('/api/categories', { ttl: 60 });
   },
-  async getCategoryById (id: string): Promise<{ name: string }> {
-    const { $cachedFetch } = useNuxtApp();
-    return await $cachedFetch(`/api/categories/${id}`, { ttl: 900 });
+  async get(id: number): Promise<CategoryDto> {
+    return await $fetch(`/api/categories/${id}`);
   },
 };

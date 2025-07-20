@@ -4,7 +4,7 @@ import { Value } from '@sinclair/typebox/value';
 import * as db from 'zapatos/db';
 import { BAD_REQUEST_CODE, INTERNAL_SERVER_ERROR_CODE } from '~/server/constants';
 import { dbPool } from '~/server/db';
-import { DeviceQuantityByLabDto } from '~/shared/schemas';
+import { DeviceQuantityByLabDto } from '~~/shared/schemas';
 
 const QueryDto = Type.Object({
   kind_id: Type.String(),

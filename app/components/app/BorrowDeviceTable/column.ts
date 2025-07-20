@@ -1,5 +1,4 @@
 import type { AugmentedColumnDef } from '~/app/components/common/DataTable/column';
-import { formatDate } from '~/lib/utils';
 import type { BorrowDevice } from './schema';
 
 const statusMap = {

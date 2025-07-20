@@ -1,20 +1,10 @@
-import { Value } from '@sinclair/typebox/value';
-import * as db from 'zapatos/db';
-import { INTERNAL_SERVER_ERROR_CODE } from '~/server/constants';
-import { dbPool } from '~/server/db';
-import { ListOfCategoryResourceDto } from '~/shared/schemas';
+import { Type } from '@sinclair/typebox';
+import { CategoryDto } from '~~/shared/schemas/category';
 
-export default defineEventHandler<Promise<ListOfCategoryResourceDto>>(async () => {
-  const categories = (await db.select('categories', {}).run(dbPool)).map(({ name, id }) => ({ id: id.toString(), name }));
-
-  const output = { categories };
-
-  if (!Value.Check(ListOfCategoryResourceDto, output)) {
-    throw createError({
-      statusCode: INTERNAL_SERVER_ERROR_CODE,
-      message: 'Internal server error: the returned output does not conform to the schema',
-    });
-  }
-
-  return output;
-});
+export default defineApi({
+  response: Type.Array(CategoryDto),
+}, (async () => {
+  return db.category.findMany({
+    select: { id: true, name: true },
+  });
+}));

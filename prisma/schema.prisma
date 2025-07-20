@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "../server/datasources/prisma"
 }
 
@@ -9,8 +9,8 @@ datasource db {
 }
 
 model Category {
-  id          BigInt       @id @default(autoincrement())
-  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  id          Int          @id @default(autoincrement())
+  createdAt   DateTime     @default(now()) @map("created_at")
   name        String
   quantity    BigInt?
   deviceKinds DeviceKind[]
@@ -20,64 +20,64 @@ model Category {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model DeviceKind {
-  category    Category? @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  category_id BigInt?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId Int?      @map("category_id")
 
-  createdAt                                           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  name                                                String?
-  meta                                                Json
-  image                                               Json?
-  brand                                               String?
-  manufacturer                                        String?
-  description                                         String?
-  datasheet                                           String?
-  unit                                                String?
-  price                                               String?
-  deleted_at                                          DateTime? @db.Timestamptz(6)
-  id                                                  String    @id @unique(map: "device_kinds_id__key") @default(dbgenerated("lpad(to_hex(nextval('seq_device_kind_count'::regclass)), 8, '0'::text)"))
-  allowed_borrow_roles                                String[]
-  allowed_view_roles                                  String[]
-  is_borrowable_lab_only                              Boolean   @default(false)
-  devices_devices_accessory_for_kind_idTodevice_kinds Device[]  @relation("devices_accessory_for_kind_idTodevice_kinds")
-  devices_devices_kindTodevice_kinds                  Device[]  @relation("devices_kindTodevice_kinds")
+  lab   Lab?    @relation(fields: [labId], references: [id], onDelete: SetNull)
+  labId String? @map("lab_id")
+
+  id           String   @id @unique @default(cuid())
+  createdAt    DateTime @default(now()) @map("created_at")
+  name         String
+  meta         Json
+  image        Json?
+  brand        String?
+  manufacturer String?
+  description  String?
+  datasheet    String?
+  unit         String?
+  price        String?
+
+  isBorrowableLabOnly Boolean   @default(false) @map("is_borrowable_lab_only")
+  deletedAt           DateTime? @map("deleted_at")
+
+  devices Device[]
 
   @@map("device_kinds")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Device {
-  created_at                                               DateTime                    @default(now()) @db.Timestamptz(6)
-  kind                                                     String
-  lab_id                                                   String?                     @db.Uuid
-  deleted_at                                               DateTime?                   @db.Timestamptz(6)
-  status                                                   DeviceStatus                @default(healthy)
-  id                                                       String                      @id @unique(map: "devices_id__key") @default(dbgenerated("to_hex(nextval('seq_devices_id'::regclass))"))
-  full_id                                                  String                      @unique @default(dbgenerated("((kind || '/'::text) || id)"))
-  printed_at                                               DateTime?                   @db.Timestamptz(6)
-  accessory_for_kind_id                                    String?
-  device_kinds_devices_accessory_for_kind_idTodevice_kinds DeviceKind?                 @relation("devices_accessory_for_kind_idTodevice_kinds", fields: [accessory_for_kind_id], references: [id])
-  device_kinds_devices_kindTodevice_kinds                  DeviceKind                  @relation("devices_kindTodevice_kinds", fields: [kind], references: [id])
-  labs                                                     Lab?                        @relation(fields: [lab_id], references: [id])
-  inventory_assessments_devices                            InventoryAssessmentDevice[]
-  maintenances_devices                                     MaintenanceDevice[]
-  receipts_devices                                         ReceiptDevice[]
-  shipments_devices                                        ShipmentDevice[]
+  deviceKindId String     @map("device_kind_id")
+  deviceKind   DeviceKind @relation(fields: [deviceKindId], references: [id])
+  lab          Lab?       @relation(fields: [labId], references: [id])
+  labId        String?    @map("lab_id")
 
-  @@index([id, deleted_at], map: "idx_devices_id_deleted")
-  @@index([id, lab_id], map: "idx_devices_id_lab_id")
-  @@index([kind, deleted_at], map: "idx_devices_kind")
+  id        String       @id @default(cuid())
+  status    DeviceStatus @default(HEALTHY)
+  printedAt DateTime?    @map("printed_at")
+
+  accessory_for_kind_id         String?
+  inventory_assessments_devices InventoryAssessmentDevice[]
+  maintenances_devices          MaintenanceDevice[]
+  receipts_devices              ReceiptDevice[]
+  shipments_devices             ShipmentDevice[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
+
   @@map("devices")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model HMICode {
   code       BigInt    @id @default(autoincrement())
-  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  created_at DateTime  @default(now())
   user_id    String?
   auth_token String?
   status     String    @default("pending")
-  updated_at DateTime? @default(now()) @db.Timestamptz(6)
-  expires_at DateTime? @db.Timestamptz(6)
+  updated_at DateTime? @default(now())
+  expires_at DateTime?
   lab_id     String?   @db.Uuid
   labs       Lab?      @relation(fields: [lab_id], references: [id])
   users      User?     @relation(fields: [user_id], references: [id])
@@ -87,7 +87,7 @@ model HMICode {
 
 model InventoryAssessment {
   id                            String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  finished_at                   DateTime?                   @db.Timestamptz(6)
+  finished_at                   DateTime?
   lab_id                        String                      @db.Uuid
   accountant_id                 String?
   status                        AssessmentStatus
@@ -111,26 +111,28 @@ model InventoryAssessmentDevice {
   @@map("inventory_assessments_devices")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model Lab {
-  id                                      String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at                              DateTime              @default(now()) @db.Timestamptz(6)
-  name                                    String?
+  adminId String? @map("admin_id")
+  admin   User?   @relation(fields: [adminId], references: [id])
+
+  id                                      String                @id @default(cuid()) @db.VarChar(36)
+  name                                    String                @db.VarChar(100)
   faculty                                 String?
   room                                    String?
   branch                                  String?
   timetable                               Json
-  admin_id                                String?
-  deleted_at                              DateTime?             @db.Timestamptz(6)
   devices                                 Device[]
   hmi_codes                               HMICode[]
   inventory_assessments                   InventoryAssessment[]
-  users                                   User?                 @relation(fields: [admin_id], references: [id], onDelete: Restrict)
   maintenances                            Maintenance[]
   receipts                                Receipt[]
   receipts_devices                        ReceiptDevice[]
   shipments_shipments_arrive_lab_idTolabs Shipment[]            @relation("shipments_arrive_lab_idTolabs")
   shipments_shipments_start_lab_idTolabs  Shipment[]            @relation("shipments_start_lab_idTolabs")
+  deviceKinds                             DeviceKind[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
 
   @@map("labs")
 }
@@ -139,7 +141,7 @@ model Maintenance {
   id                   String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   status               MaintenanceStatus
   maintainer_id        String?
-  finished_at          DateTime?           @db.Timestamptz(6)
+  finished_at          DateTime?
   lab_id               String              @db.Uuid
   labs                 Lab                 @relation(fields: [lab_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users                User?               @relation(fields: [maintainer_id], references: [id], onDelete: Restrict)
@@ -162,14 +164,14 @@ model MaintenanceDevice {
 }
 
 model Receipt {
-  id            String          @id
-  actor_id      String
-  checker_id    String
-  lab_id        String          @db.Uuid
-  labs          Lab             @relation(fields: [lab_id], references: [id])
-  ReceiptDevice ReceiptDevice[]
-  userId        String?
-  User          User?           @relation(fields: [userId], references: [id])
+  id         String          @id
+  actor_id   String
+  checker_id String
+  labId      String          @map("lab_id")
+  labs       Lab             @relation(fields: [labId], references: [id])
+  devices    ReceiptDevice[]
+  userId     String?
+  User       User?           @relation(fields: [userId], references: [id])
 
   @@map("receipts")
 }
@@ -181,7 +183,7 @@ model ReceiptDevice {
   prev_quality             DeviceStatus?
   borrow_id                String?       @db.Uuid
   return_id                String?       @db.Uuid
-  expected_returned_at     DateTime      @db.Timestamptz(6)
+  expected_returned_at     DateTime
   id                       String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   expected_returned_lab_id String?       @db.Uuid
   after_quality            DeviceStatus?
@@ -281,14 +283,14 @@ enum AssessmentStatus {
 }
 
 enum DeviceStatus {
-  healthy
-  broken
-  discarded
-  assessing
-  maintaining
-  shipping
-  borrowing
-  lost
+  HEALTHY
+  BROKEN
+  DISCARDED
+  ASSESSING
+  MAINTAINING
+  SHIPPING
+  BORROWING
+  LOST
 
   @@map("device_status")
 }

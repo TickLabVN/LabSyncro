@@ -5,6 +5,7 @@ env.config();
 export default defineNuxtConfig({
   ssr: false,
   compatibilityDate: '2024-11-15',
+  typescript: { strict: true, typeCheck: true },
   devtools: { enabled: true },
   modules: [
     '@nuxt/eslint',
@@ -48,7 +49,7 @@ export default defineNuxtConfig({
     },
   },
   eslint: {},
-  css: ['~/assets/css/fonts.css', '~/assets/css/main.css', 'vue-toastification/dist/index.css'],
+  css: ['~/app/assets/css/fonts.css', '~/app/assets/css/main.css', 'vue-toastification/dist/index.css'],
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -72,7 +73,7 @@ export default defineNuxtConfig({
      * Directory that the component lives in.
      * @default "./components/ui"
      */
-    componentDir: './components/ui',
+    componentDir: './app/components/ui',
   },
   runtimeConfig: {
     DATABASE_USER: process.env.DATABASE_USER,

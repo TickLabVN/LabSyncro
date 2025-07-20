@@ -2,7 +2,7 @@ import type {
   DeviceKindResourceDto,
   DeviceQuantityByLabDto,
   ListOfDeviceKindResourceDto,
-} from '~/shared/schemas';
+} from '~~/shared/schemas';
 
 export const deviceKindService = {
   async getDeviceKindsByCategoryId(
@@ -109,7 +109,7 @@ export const deviceKindService = {
     });
   },
   async getTotalItems(
-    categoryId: string | undefined,
+    categoryId: number | undefined,
     {
       searchText = undefined,
       searchFields = [],
