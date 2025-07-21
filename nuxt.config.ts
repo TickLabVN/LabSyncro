@@ -1,22 +1,23 @@
+import tailwindcss from '@tailwindcss/vite';
 import env from 'dotenv';
 env.config();
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
-  compatibilityDate: '2024-11-15',
+  compatibilityDate: '2025-07-15',
   typescript: { strict: true, typeCheck: true },
   devtools: { enabled: true },
   modules: [
     '@nuxt/eslint',
     '@nuxt/image',
-    '@nuxtjs/tailwindcss',
     '@nuxt/icon',
     'shadcn-nuxt',
     '@sidebase/nuxt-auth',
   ],
-  build: {
-    transpile: ['vue-toastification']
+  build: { transpile: ['vue-toastification'] },
+  vite: {
+    plugins: [tailwindcss()],
   },
   nitro: {
     preset: 'bun',
@@ -50,12 +51,6 @@ export default defineNuxtConfig({
   },
   eslint: {},
   css: ['~/assets/css/fonts.css', '~/assets/css/main.css', 'vue-toastification/dist/index.css'],
-  postcss: {
-    plugins: {
-      '@tailwindcss/postcss': {},
-      autoprefixer: {},
-    },
-  },
   components: [
     {
       path: './components/app',
