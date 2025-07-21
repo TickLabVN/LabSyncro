@@ -79,19 +79,6 @@ export type ReturnedReceiptResourceDto = Static<
   typeof ReturnedReceiptResourceDto
 >;
 
-export const DeviceQuantityByLabDto = Type.Object({
-  labs: Type.Array(
-    Type.Object({
-      name: Type.String(),
-      branch: Type.String(),
-      room: Type.String(),
-      borrowableQuantity: Type.Number(),
-    }),
-  ),
-});
-
-export type DeviceQuantityByLabDto = Static<typeof DeviceQuantityByLabDto>;
-
 export const ListOfDeviceKindResourceDto = Type.Object({
   deviceKinds: Type.Array(
     Type.Object({

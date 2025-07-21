@@ -88,6 +88,7 @@ export default defineNuxtConfig({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     AUTH_SECRET: process.env.AUTH_SECRET,
     CORS_ALLOWED_ORIGIN: process.env.CORS_ALLOWED_ORIGIN,
+    IMAGE_CDN_URL: process.env.IMAGE_CDN_URL || 'http://localhost:3000/static',
   },
   app: {
     head: {

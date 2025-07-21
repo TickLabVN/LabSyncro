@@ -18,50 +18,62 @@ model Category {
   @@map("categories")
 }
 
+model Image {
+  id              String            @id @default(cuid()) @db.VarChar(256)
+  name            String            @db.VarChar(255)
+  extension       String            @db.VarChar(10)
+  mimeType        String            @map("mime_type") @db.VarChar(255)
+  createdAt       DateTime          @default(now()) @map("created_at")
+  uploadedAt      DateTime?         @map("uploaded_at")
+  DeviceKindImage DeviceKindImage[]
+
+  @@map("images")
+}
+
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model DeviceKind {
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   categoryId Int?      @map("category_id")
 
-  lab   Lab?    @relation(fields: [labId], references: [id], onDelete: SetNull)
-  labId String? @map("lab_id")
-
-  id           String   @id @unique @default(cuid())
-  createdAt    DateTime @default(now()) @map("created_at")
+  id           String            @id @unique @default(cuid())
+  createdAt    DateTime          @default(now()) @map("created_at")
   name         String
   meta         Json
-  image        Json?
+  images       DeviceKindImage[]
   brand        String?
   manufacturer String?
   description  String?
-  datasheet    String?
   unit         String?
   price        String?
-
-  isBorrowableLabOnly Boolean   @default(false) @map("is_borrowable_lab_only")
-  deletedAt           DateTime? @map("deleted_at")
-
-  devices Device[]
+  borrowType   BorrowType        @default(HOME_ALLOWED) @map("borrow_type")
+  deletedAt    DateTime?         @map("deleted_at")
+  devices      Device[]
 
   @@map("device_kinds")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum BorrowType {
+  LAB_ONLY
+  HOME_ALLOWED
+}
+
 model Device {
-  deviceKindId String     @map("device_kind_id")
-  deviceKind   DeviceKind @relation(fields: [deviceKindId], references: [id])
-  lab          Lab?       @relation(fields: [labId], references: [id])
-  labId        String?    @map("lab_id")
+  deviceKindId   String     @map("device_kind_id")
+  deviceKind     DeviceKind @relation(fields: [deviceKindId], references: [id])
+  lab            Lab?       @relation(fields: [labId], references: [id])
+  labId          String?    @map("lab_id")
+  parentDevice   Device?    @relation("ParentDevice", fields: [parentDeviceId], references: [id])
+  parentDeviceId String?    @map("parent_device_id")
 
   id        String       @id @default(cuid())
   status    DeviceStatus @default(HEALTHY)
   printedAt DateTime?    @map("printed_at")
 
-  accessory_for_kind_id         String?
-  inventory_assessments_devices InventoryAssessmentDevice[]
-  maintenances_devices          MaintenanceDevice[]
-  receipts_devices              ReceiptDevice[]
-  shipments_devices             ShipmentDevice[]
+  childDevices Device[]                    @relation("ParentDevice")
+  assessments  InventoryAssessmentDevice[]
+  maintenances MaintenanceDevice[]
+  receipts     ReceiptDevice[]
+  shipments    ShipmentDevice[]
 
   createdAt DateTime  @default(now()) @map("created_at")
   deletedAt DateTime? @map("deleted_at")
@@ -69,7 +81,22 @@ model Device {
   @@map("devices")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+enum ImageType {
+  COVER
+  GALLERY
+  ATTACHMENT
+}
+
+model DeviceKindImage {
+  deviceKindId String     @map("device_kind_id")
+  deviceKind   DeviceKind @relation(fields: [deviceKindId], references: [id], onDelete: Cascade)
+  image        Image      @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId      String     @map("image_id")
+  type         ImageType
+
+  @@id([deviceKindId, imageId])
+}
+
 model HMICode {
   code       BigInt    @id @default(autoincrement())
   created_at DateTime  @default(now())
@@ -117,9 +144,9 @@ model Lab {
 
   id                                      String                @id @default(cuid()) @db.VarChar(36)
   name                                    String                @db.VarChar(100)
-  faculty                                 String?
-  room                                    String?
-  branch                                  String?
+  faculty                                 String
+  room                                    String
+  branch                                  String
   timetable                               Json
   devices                                 Device[]
   hmi_codes                               HMICode[]
@@ -129,7 +156,6 @@ model Lab {
   receipts_devices                        ReceiptDevice[]
   shipments_shipments_arrive_lab_idTolabs Shipment[]            @relation("shipments_arrive_lab_idTolabs")
   shipments_shipments_start_lab_idTolabs  Shipment[]            @relation("shipments_start_lab_idTolabs")
-  deviceKinds                             DeviceKind[]
 
   createdAt DateTime  @default(now()) @map("created_at")
   deletedAt DateTime? @map("deleted_at")

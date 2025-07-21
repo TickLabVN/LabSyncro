@@ -1,77 +1,49 @@
-import type { Static } from '@sinclair/typebox';
 import { Type } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
-import * as db from 'zapatos/db';
-import {
-  BAD_REQUEST_CODE,
-  INTERNAL_SERVER_ERROR_CODE,
-  NOT_FOUND_CODE,
-} from '~/server/constants';
-import { dbPool } from '~/server/db';
-import { DeviceKindResourceDto } from '~/shared/schemas';
+import { DeviceKindDto } from '~~/shared/schemas/deviceKind';
 
-const QueryDto = Type.Object({ lab_id: Type.Optional(Type.String()) });
-type QueryDto = Static<typeof QueryDto>;
+export default defineApi({
+  query: Type.Object({ labId: Type.Optional(Type.String()) }),
+  params: Type.Object({ id: Type.String() }),
+  response: DeviceKindDto,
+}, async (event) => {
+  const deviceKind = await db.deviceKind.findUniqueOrThrow({
+    where: { id: event.routerParams.id, deletedAt: null },
+    select: {
+      description: true,
+      unit: true,
+      brand: true,
+      manufacturer: true,
+      images: { select: { imageId: true, type: true } },
+      id: true,
+      name: true,
+      devices: {
+        select: { status: true },
+        where: { deletedAt: null, labId: event.query.labId },
+      },
+      category: { select: { id: true, name: true } },
+    },
+  })
+  const coverImage = deviceKind.images.find(img => img.type === 'COVER');
+  const coverImageUrl = coverImage ? getImageUrl(coverImage.imageId) : '';
+  const galleryImageUrls = deviceKind.images.reduce((acc, img) => {
+    if (img.type === 'GALLERY')
+      acc.push(getImageUrl(img.imageId));
+    return acc;
+    }, [] as string[]);
 
-export default defineEventHandler<
-  { query: QueryDto },
-  Promise<DeviceKindResourceDto>
->(async (event) => {
-  const query = Value.Convert(QueryDto, getQuery(event));
-  if (!Value.Check(QueryDto, query)) {
-    throw createError({
-      statusCode: BAD_REQUEST_CODE,
-      message: 'Bad request: Invalid query string',
-    });
-  }
-  const { lab_id: labId } = query;
-
-  const deviceKindId = Value.Convert(
-    Type.String(),
-    getRouterParam(event, 'id'),
-  );
-
-  const [deviceKind] = await db.sql`
-      SELECT ${'device_kinds'}.${'unit'}, ${'device_kinds'}.${'brand'}, ${'device_kinds'}.${'description'}, ${'device_kinds'}.${'manufacturer'}, ${'device_kinds'}.${'image'}, ${'device_kinds'}.${'id'}, ${'device_kinds'}.${'name'}, count(*)::int as ${'quantity'}, sum(CASE WHEN ${'devices'}.${'status'} = 'healthy' THEN 1 ELSE 0 END)::int as borrowable_quantity, ${'categories'}.${'id'} as category_id, ${'categories'}.${'name'} as category_name
-      FROM ${'devices'}
-        JOIN ${'device_kinds'}
-        ON ${'devices'}.${'kind'} = ${'device_kinds'}.${'id'} AND ${'devices'}.${'deleted_at'} IS NULL
-        JOIN ${'categories'}
-        ON ${'categories'}.${'id'} = ${'device_kinds'}.${'category_id'}
-      WHERE 
-        ${'device_kinds'}.${'id'} = ${db.param(deviceKindId)} 
-        AND ${'device_kinds'}.${'deleted_at'} IS NULL
-        AND ${labId !== undefined ? db.raw(`devices.lab_id = '${labId}'`) : db.raw('TRUE')}
-      GROUP BY ${'device_kinds'}.${'id'}, ${'categories'}.${'id'}
-      `.run(dbPool);
-
-  if (!deviceKind) {
-    throw createError({
-      statusCode: NOT_FOUND_CODE,
-      message: 'Device kind not found!',
-    });
-  }
-
-  const output = {
+  const deviceKindDto: DeviceKindDto = {
     id: deviceKind.id,
-    unit: deviceKind.unit,
     name: deviceKind.name,
+    category: deviceKind.category,
     brand: deviceKind.brand,
+    borrowableQuantity: deviceKind.devices.reduce((acc, device) => acc + (device.status === 'HEALTHY' ? 1 : 0), 0),
+    quantity: deviceKind.devices.length,
+    unit: deviceKind.unit,
     manufacturer: deviceKind.manufacturer,
-    mainImage: deviceKind.image.main_image,
-    subImages: deviceKind.image.sub_images,
-    quantity: deviceKind.quantity,
-    borrowableQuantity: deviceKind.borrowable_quantity,
-    categoryId: deviceKind.category_id,
-    categoryName: deviceKind.category_name,
+    coverImageUrl,
+    galleryImageUrls,
     description: deviceKind.description,
   };
-  if (!Value.Check(DeviceKindResourceDto, output)) {
-    throw createError({
-      statusCode: INTERNAL_SERVER_ERROR_CODE,
-      message:
-        'Internal server error: the returned output does not conform to the schema',
-    });
-  }
-  return output;
+  return deviceKindDto;
 });
