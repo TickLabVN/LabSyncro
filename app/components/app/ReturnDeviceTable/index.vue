@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { receiptService } from '~/app/services';
+import { receiptService } from '~/services';
 import { columns } from './column';
-import type { AugmentedColumnDef } from '~/app/components/common/DataTable/column';
+import type { AugmentedColumnDef } from '~/components/common/DataTable/column';
 
 async function fetchData(offset: number, length: number, options: {
   desc?: boolean,
@@ -27,7 +27,6 @@ async function fetchData(offset: number, length: number, options: {
 </script>
 
 <template>
-  <DataTable
-:selectable="true" :searchable="true" :qrable="true" :fetch-fn="fetchData"
+  <DataTable :selectable="true" :searchable="true" :qrable="true" :fetch-fn="fetchData"
     :columns="columns as AugmentedColumnDef<unknown>[]" />
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { createColumns } from './column';
-import type { AugmentedColumnDef } from '~/app/components/common/DataTable/column';
+import type { AugmentedColumnDef } from '~/components/common/DataTable/column';
 import { sortBy } from 'lodash-es';
 
 const props = defineProps<{
@@ -17,15 +17,15 @@ const emits = defineEmits<{
   'device-kind-link-click': [string];
 }>();
 
-async function deleteData (kindIds: string[]) {
+async function deleteData(kindIds: string[]) {
   emits('device-kinds-delete', kindIds);
 }
 
-async function onDeviceKindLinkClick (id: string) {
+async function onDeviceKindLinkClick(id: string) {
   emits('device-kind-link-click', id);
 }
 
-async function fetchData (offset: number, length: number, options: { desc?: boolean, sortField?: string }): Promise<{ data: unknown[], totalPages: number }> {
+async function fetchData(offset: number, length: number, options: { desc?: boolean, sortField?: string }): Promise<{ data: unknown[], totalPages: number }> {
   let deviceKinds = props.cart.map((deviceKind) => ({
     id: deviceKind.id,
     name: deviceKind.name,
@@ -47,8 +47,7 @@ async function fetchData (offset: number, length: number, options: { desc?: bool
 </script>
 
 <template>
-  <DataTable
-:key="cart.flatMap(({ deviceIds }) => deviceIds).join('-')" :selectable="false" :searchable="false"
+  <DataTable :key="cart.flatMap(({ deviceIds }) => deviceIds).join('-')" :selectable="false" :searchable="false"
     :qrable="false" :fetch-fn="fetchData" :delete-fn="deleteData"
     :columns="createColumns({ onDeviceKindLinkClick }) as AugmentedColumnDef<unknown>[]" />
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { laboratoryService } from '~/app/services';
+import { laboratoryService } from '~/services';
 
 const emit = defineEmits<{
   (
@@ -38,8 +38,7 @@ function handleSelect() {
   <div class="space-y-4">
     <div v-if="isLoading" class="text-center py-4">
       <div
-        class="inline-block w-6 h-6 border-2 border-tertiary-darker border-t-transparent rounded-full animate-spin"
-      />
+        class="inline-block w-6 h-6 border-2 border-tertiary-darker border-t-transparent rounded-full animate-spin" />
       <p class="mt-2 text-sm text-gray-500">Loading laboratories...</p>
     </div>
 
@@ -59,9 +58,7 @@ function handleSelect() {
           </SelectTrigger>
           <SelectContent>
             <div v-if="isLoading" class="flex items-center justify-center p-2">
-              <div
-                class="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin"
-              />
+              <div class="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
             </div>
             <SelectItem v-for="lab in labs" :key="lab.id" :value="lab.id">
               {{ lab.room }}, {{ lab.branch }}
@@ -70,11 +67,7 @@ function handleSelect() {
         </Select>
       </div>
 
-      <Button
-        :disabled="!selectedLabId"
-        class="w-full bg-tertiary-dark hover:bg-tertiary-darker"
-        @click="handleSelect"
-      >
+      <Button :disabled="!selectedLabId" class="w-full bg-tertiary-dark hover:bg-tertiary-darker" @click="handleSelect">
         Confirm Selection
       </Button>
     </div>

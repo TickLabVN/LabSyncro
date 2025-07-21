@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CheckCircle, XCircle } from 'lucide-vue-next';
 import { useToast } from 'vue-toastification';
-import { authService, laboratoryService } from '~/app/services';
+import { authService, laboratoryService } from '~/services';
 
 definePageMeta({
   middleware: ['permission'],
@@ -75,7 +75,7 @@ async function handleLabSelection(lab: {
     <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-md">
       <div v-if="isLoading" class="text-center">
         <div
-          class="inline-block w-8 h-8 border-4 border-tertiary-darker border-t-transparent rounded-full animate-spin mb-4"/>
+          class="inline-block w-8 h-8 border-4 border-tertiary-darker border-t-transparent rounded-full animate-spin mb-4" />
         <h2 class="text-xl font-semibold text-gray-900">
           {{
             isAuthenticated

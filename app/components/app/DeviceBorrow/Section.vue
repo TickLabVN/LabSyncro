@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { categoryService } from '~/app/services';
+import { categoryService } from '~/services';
 
 const categories = await categoryService.getCategories();
 </script>

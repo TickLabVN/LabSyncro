@@ -2,7 +2,7 @@ import type {
   BorrowedReceiptResourceDto,
   ReadyBorrowedDevicesResourceDto,
   ReturnedReceiptResourceDto,
-} from '~/shared/schemas';
+} from '~~/shared/schemas';
 
 export const receiptService = {
   async getBorrowReceipts(

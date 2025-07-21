@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { laboratoryService, deviceService } from '~/app/services';
+import { laboratoryService, deviceService } from '~/services';
 
 interface AddDeviceForm {
   quantity: string
@@ -126,8 +126,7 @@ onMounted(async () => {
     </DialogContent>
   </Dialog>
 
-  <DeviceNewPrintQRCode
-v-model:is-open="showPrintModal"
+  <DeviceNewPrintQRCode v-model:is-open="showPrintModal"
     :device-data="{ ...form, deviceKindId: props.deviceKindId, deviceKindName: props.deviceKindName }"
     :list-device-ids="createdDeviceIds" @print="handlePrint" @skip="handleSkip" />
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { deviceKindService } from '~/app/services';
+import { deviceKindService } from '~/services';
 
 const emits = defineEmits<{
   'device-select': [any],
@@ -36,20 +36,20 @@ watch(searchText, async () => {
     description
   }));
 });
-function focusNextSearchItem () {
+function focusNextSearchItem() {
   if (focusedSearchItemIndex.value === null) focusedSearchItemIndex.value = -1;
   focusedSearchItemIndex.value = (focusedSearchItemIndex.value + 1) % numberOfSearchItemsShown;
 }
-function focusPrevSearchItem () {
+function focusPrevSearchItem() {
   if (focusedSearchItemIndex.value === null) focusedSearchItemIndex.value = 0;
   focusedSearchItemIndex.value = (focusedSearchItemIndex.value - 1 + numberOfSearchItemsShown) % numberOfSearchItemsShown;
 }
-function goToSearchItem (deviceInfo: any) {
+function goToSearchItem(deviceInfo: any) {
   searchText.value = deviceInfo.name;
   setInactive();
   emits('device-select', deviceInfo);
 }
-function unfocusSearchItem () {
+function unfocusSearchItem() {
   focusedSearchItemIndex.value = null;
 }
 </script>
@@ -57,22 +57,19 @@ function unfocusSearchItem () {
 <template>
   <div ref="dropdown" class="relative">
     <div class="relative">
-      <input
-v-model="searchText"
+      <input v-model="searchText"
         class="bg-white text-primary-light placeholder:text-primary-light border-2 h-11 w-[100%] pl-10 pr-3 rounded-md text-md placeholder:text-normal"
         type="search" placeholder="Tên/Mã loại thiết bị" @keydown.down="focusNextSearchItem"
         @keydown.up="focusPrevSearchItem"
         @keydown.enter="focusedSearchItemIndex !== null && goToSearchItem(searchItems[focusedSearchItemIndex!])"
         @keydown.esc="unfocusSearchItem">
-      <Icon
-aria-hidden class="absolute left-3 top-[12px] text-xl text-primary-dark"
+      <Icon aria-hidden class="absolute left-3 top-[12px] text-xl text-primary-dark"
         name="i-heroicons-magnifying-glass" />
     </div>
 
     <div
       :class="`${isDropdownActive && searchItems.length ? 'flex' : 'hidden'} flex-col gap-1 absolute bg-white p-1 mt-1 w-[120%] z-50 shadow-[0_0px_16px_-3px_rgba(0,0,0,0.3)]`">
-      <a
-v-for="(item, index) in searchItems" :key="item.id"
+      <a v-for="(item, index) in searchItems" :key="item.id"
         :class="`cursor-pointer px-2 text-normal p-1 flex justify-start gap-2 hover:bg-gray-100 ${focusedSearchItemIndex === index ? 'bg-secondary-light' : ''}`"
         @click="goToSearchItem(searchItems[index])">
         <img :src="item.mainImage" class="h-6 w-6 block">

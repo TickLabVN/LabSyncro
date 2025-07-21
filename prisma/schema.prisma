@@ -35,19 +35,20 @@ model DeviceKind {
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   categoryId Int?      @map("category_id")
 
-  id           String            @id @unique @default(cuid())
-  createdAt    DateTime          @default(now()) @map("created_at")
-  name         String
-  meta         Json
-  images       DeviceKindImage[]
-  brand        String?
-  manufacturer String?
-  description  String?
-  unit         String?
-  price        String?
-  borrowType   BorrowType        @default(HOME_ALLOWED) @map("borrow_type")
-  deletedAt    DateTime?         @map("deleted_at")
-  devices      Device[]
+  id                    String            @id @unique @default(cuid())
+  createdAt             DateTime          @default(now()) @map("created_at")
+  borrowType            BorrowType        @default(HOME_ALLOWED) @map("borrow_type")
+  requiredBorrowerRoles UserRole[]        @default([]) @map("required_borrower_roles")
+  name                  String
+  meta                  Json
+  images                DeviceKindImage[]
+  brand                 String?
+  manufacturer          String?
+  description           String?
+  unit                  String?
+  price                 Float?            @db.DoublePrecision
+  deletedAt             DateTime?         @map("deleted_at")
+  devices               Device[]
 
   @@map("device_kinds")
 }

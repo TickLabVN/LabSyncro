@@ -1,7 +1,7 @@
 import type {
   AdminManagedLabsDto,
   ListOfLabResourceDto,
-} from '~/shared/schemas';
+} from '~~/shared/schemas';
 
 export const laboratoryService = {
   async getAllLabs({

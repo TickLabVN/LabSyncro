@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { deviceKindService } from '~/app/services';
-import type { DeviceKindResourceDto } from '~/shared/schemas';
+import { deviceKindService } from '~/services';
+import type { DeviceKindResourceDto } from '~~/shared/schemas';
 
 const props = defineProps<{
   kindId: string | null;
@@ -26,8 +26,7 @@ watch(() => [props.kindId], async () => {
 </script>
 
 <template>
-  <div
-v-if="deviceKindMeta && kindId"
+  <div v-if="deviceKindMeta && kindId"
     class="fixed z-50 top-0 left-0 w-[100vw] h-[100vh] flex justify-center items-center">
     <div class="bg-white shadow-[0_0px_16px_1px_rgba(0,0,0,0.3)] w-[400px] sm:w-[90vw] p-6">
       <div class="flex justify-between gap-3 items-center">
@@ -39,8 +38,7 @@ v-if="deviceKindMeta && kindId"
         </div>
       </div>
       <div class="mt-6">
-        <CheckoutDeviceSelectTable
-:selected-devices="selectedDevices" :kind-id="kindId"
+        <CheckoutDeviceSelectTable :selected-devices="selectedDevices" :kind-id="kindId"
           @device-add="(id) => emits('device-add', { kind: props.kindId!, id })"
           @device-delete="(id) => emits('device-delete', { kind: props.kindId!, id })" />
       </div>

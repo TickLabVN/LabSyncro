@@ -3,7 +3,7 @@ import { Value } from '@sinclair/typebox/value';
 import * as db from 'zapatos/db';
 import { BAD_REQUEST_CODE, FORBIDDEN_CODE, INTERNAL_SERVER_ERROR_CODE, NOT_FOUND_CODE } from '~/server/constants';
 import { dbPool } from '~/server/db';
-import { UserResourceDto } from '~/shared/schemas';
+import { UserResourceDto } from '~~/shared/schemas';
 
 const BodyDto = Type.Object({
   token: Type.String(),

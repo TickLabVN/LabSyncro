@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { Check, ChevronDown, MoreVertical, Search } from 'lucide-vue-next';
-import { userService } from '~/app/services';
-import type { UserResourceDto } from '~/shared/schemas';
+import { userService } from '~/services';
+import type { UserResourceDto } from '~~/shared/schemas';
 
 definePageMeta({
   middleware: ['permission'],
@@ -40,16 +40,16 @@ const getUserInitials = (name: string) => {
 
 const getRoleBadgeStyle = (roleKey: string) => {
   switch (roleKey) {
-  case 'admin':
-    return 'bg-green-100 text-green-600 hover:bg-green-600 hover:text-white';
-  case 'lab_admin':
-    return 'bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white';
-  case 'teacher':
-    return 'bg-purple-100 text-purple-600 hover:bg-purple-600 hover:text-white';
-  case 'student':
-    return 'bg-orange-100 text-orange-600 hover:bg-orange-600 hover:text-white';
-  default:
-    return 'bg-gray-200 text-gray-600 hover:bg-gray-600 hover:text-white';
+    case 'admin':
+      return 'bg-green-100 text-green-600 hover:bg-green-600 hover:text-white';
+    case 'lab_admin':
+      return 'bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white';
+    case 'teacher':
+      return 'bg-purple-100 text-purple-600 hover:bg-purple-600 hover:text-white';
+    case 'student':
+      return 'bg-orange-100 text-orange-600 hover:bg-orange-600 hover:text-white';
+    default:
+      return 'bg-gray-200 text-gray-600 hover:bg-gray-600 hover:text-white';
   }
 };
 
@@ -146,8 +146,7 @@ onMounted(async () => {
           </TableCell>
           <TableCell>
             <div class="flex gap-2">
-              <Badge
-v-for="role in user.roles" :key="role.key" :class="getRoleBadgeStyle(role.key)"
+              <Badge v-for="role in user.roles" :key="role.key" :class="getRoleBadgeStyle(role.key)"
                 class="cursor-pointer">
                 {{ role.name }}
               </Badge>

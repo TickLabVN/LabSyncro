@@ -4,7 +4,7 @@ import { Value } from '@sinclair/typebox/value';
 import * as db from 'zapatos/db';
 import { BAD_REQUEST_CODE, INTERNAL_SERVER_ERROR_CODE } from '~/server/constants';
 import { dbPool } from '~/server/db';
-import { AdminManagedLabsDto } from '~/shared/schemas';
+import { AdminManagedLabsDto } from '~~/shared/schemas';
 
 const QueryDto = Type.Object({
   offset: Type.Number(),
@@ -62,12 +62,12 @@ export default defineEventHandler<
         ${'labs'}.${'deleted_at'} IS NULL
         AND ${'labs'}.${'admin_id'} = ${db.param(userId)}
         ${searchText !== undefined
-    ? db.raw(`AND (
+      ? db.raw(`AND (
           (${searchFields?.includes('location') || false} AND strip_vietnamese_accents(labs.room || ', ' || labs.branch) ILIKE strip_vietnamese_accents('%${searchText}%')) OR
           (${searchFields?.includes('lab_name') || false} AND strip_vietnamese_accents(labs.name) ILIKE strip_vietnamese_accents('%${searchText}%'))
         )`)
-    : db.raw('')
-}
+      : db.raw('')
+    }
       ORDER BY ${sortField ? db.raw(`${sortField} ${desc ? 'DESC' : 'ASC'}, `) : db.raw('')} ${'labs'}.${'name'} ASC
       LIMIT ${db.param(length)}
       OFFSET ${db.param(offset)}
@@ -80,12 +80,12 @@ export default defineEventHandler<
         ${'labs'}.${'deleted_at'} IS NULL
         AND ${'labs'}.${'admin_id'} = ${db.param(userId)}
         ${searchText !== undefined
-    ? db.raw(`AND (
+      ? db.raw(`AND (
           (${searchFields?.includes('location') || false} AND strip_vietnamese_accents(labs.room || ', ' || labs.branch) ILIKE strip_vietnamese_accents('%${searchText}%')) OR
           (${searchFields?.includes('lab_name') || false} AND strip_vietnamese_accents(labs.name) ILIKE strip_vietnamese_accents('%${searchText}%'))
         )`)
-    : db.raw('')
-}
+      : db.raw('')
+    }
     `.run(dbPool);
 
   const totalPages = Math.ceil(totalRecords / length);

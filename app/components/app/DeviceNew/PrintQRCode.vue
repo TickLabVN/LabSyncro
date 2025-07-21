@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { deviceService } from '~/app/services';
+import { deviceService } from '~/services';
 
 const router = useRouter();
 

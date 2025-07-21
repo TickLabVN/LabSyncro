@@ -3,7 +3,7 @@ import { Value } from '@sinclair/typebox/value';
 import * as db from 'zapatos/db';
 import { BAD_REQUEST_CODE, INTERNAL_SERVER_ERROR_CODE } from '~/server/constants';
 import { dbPool } from '~/server/db';
-import { ListOfLabResourceDto } from '~/shared/schemas';
+import { ListOfLabResourceDto } from '~~/shared/schemas';
 
 const QueryDto = Type.Object({
   search_text: Type.Optional(Type.String()),

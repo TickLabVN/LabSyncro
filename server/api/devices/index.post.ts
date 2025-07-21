@@ -1,31 +1,16 @@
-import { Type, type Static } from '@sinclair/typebox';
-import { Value } from '@sinclair/typebox/value';
-import * as db from 'zapatos/db';
-import { BAD_REQUEST_CODE } from '~/server/constants';
-import { dbPool } from '~/server/db';
+import { Type } from '@sinclair/typebox';
+import { CreateDeviceDto } from '~~/shared/schemas/device';
 
-const BodyDto = Type.Array(
-  Type.Object({
-    kind: Type.String(),
-    lab_id: Type.String(),
+export default defineApi({
+  body: Type.Array(CreateDeviceDto),
+  response: Type.Object({
+    count: Type.Number(),
   }),
-);
-type BodyDto = Static<typeof BodyDto>;
-
-export default defineEventHandler<{ body: BodyDto }>(async (event) => {
-  const body = Value.Convert(BodyDto, await readBody(event));
-  if (!Value.Check(BodyDto, body)) {
-    throw createError({
-      statusCode: BAD_REQUEST_CODE,
-      message: 'Bad request: Invalid body',
-    });
-  }
-
-  const insertedDevices = await db.sql`
-    INSERT INTO ${'devices'} (kind, lab_id)
-    VALUES ${db.raw(body.map((item) => `('${item.kind}', '${item.lab_id}')`).join(', '))}
-    RETURNING id;
-  `.run(dbPool);
-
-  return insertedDevices;
+}, async (event) => {
+  return db.device.createMany({
+    data: event.body.map((device) => ({
+      deviceKindId: device.kindId,
+      labId: device.labId,
+    })),
+  });
 });

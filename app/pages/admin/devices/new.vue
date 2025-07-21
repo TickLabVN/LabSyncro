@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { categoryService } from '~/app/services';
+import { categoryService } from '~/services';
 
 definePageMeta({
   middleware: ['permission']
@@ -118,8 +118,7 @@ onMounted(async () => {
               <div class="border-2 border-dashed border-gray-300 rounded-lg p-6">
                 <div class="flex flex-col items-center">
                   <div class="flex flex-wrap gap-4">
-                    <div
-v-for="(image, index) in imagePreview" :key="index"
+                    <div v-for="(image, index) in imagePreview" :key="index"
                       class="w-32 h-32 flex justify-center items-center border rounded-lg overflow-hidden">
                       <img :src="image" alt="Preview" class="w-full h-full object-cover">
                     </div>
@@ -140,8 +139,7 @@ v-for="(image, index) in imagePreview" :key="index"
 
       <section class="bg-white mt-8 p-4 py-8 pb-8">
         <h1 class="font-bold text-2xl mb-8"> Tồn kho thiết bị </h1>
-        <DeviceNewInventoryTable
-:key="deviceKindId" :kind-id="deviceKindId" :kind-name="deviceName"
+        <DeviceNewInventoryTable :key="deviceKindId" :kind-id="deviceKindId" :kind-name="deviceName"
           @device-kind-link-click="handleDeviceKindLinkClick" />
       </section>
 

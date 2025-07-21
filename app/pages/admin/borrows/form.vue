@@ -7,7 +7,7 @@ import {
   deviceService,
   receiptService,
   userService,
-} from '~/app/services';
+} from '~/services';
 
 definePageMeta({
   middleware: ['permission'],
@@ -318,12 +318,10 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
             <div class="flex gap-4 mb-6">
               <CheckoutDeviceSearchBox @device-select="openModalForDeviceId" />
               <CheckoutQrButton />
-              <CheckoutDeviceSelectModal
-:kind-id="currentDeviceKindId" :selected-devices="selectedDevices"
+              <CheckoutDeviceSelectModal :kind-id="currentDeviceKindId" :selected-devices="selectedDevices"
                 @close-modal="closeModal" @device-add="addDevice" @device-delete="deleteDevice" />
             </div>
-            <CheckoutDeviceKindTable
-:cart="devicesInCart" @device-kinds-delete="deleteDeviceKinds"
+            <CheckoutDeviceKindTable :cart="devicesInCart" @device-kinds-delete="deleteDeviceKinds"
               @device-kind-link-click="openModalForDeviceId" />
           </div>
         </div>
@@ -346,8 +344,7 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
                   <label class="text-sm text-gray-600">
                     Mã số sinh viên <span class="text-red-500">*</span>
                   </label>
-                  <Input
-:model-value="formState.userId" class="text-lg" @update:model-value="
+                  <Input :model-value="formState.userId" class="text-lg" @update:model-value="
                     (value) => (formState.userId = value.toString())
                   " />
                 </div>
@@ -366,13 +363,13 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
                     Mã đơn:
                     <span class="font-semibold text-blue-600">{{
                       formState.receiptCode
-                      }}</span>
+                    }}</span>
                   </div>
                   <div>
                     Ngày mượn:
                     <span class="font-semibold text-blue-600">{{
                       formState.borrowDate.toISOString().substr(0, 10)
-                      }}</span>
+                    }}</span>
                   </div>
                 </div>
               </div>
@@ -381,8 +378,7 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
                   <label class="text-lg text-gray-600">
                     Ngày hẹn trả <span class="text-red-500">*</span>
                   </label>
-                  <Input
-:model-value="formState.returnDate" type="date" class="text-lg p-4 rounded-xl border-2"
+                  <Input :model-value="formState.returnDate" type="date" class="text-lg p-4 rounded-xl border-2"
                     @update:model-value="
                       (value) => (formState.returnDate = value.toString())
                     " />
@@ -397,8 +393,7 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
             </div>
           </div>
           <div class="flex justify-end">
-            <button
-class="bg-tertiary-darker text-normal text-white rounded-md p-2 px-4 w-full"
+            <button class="bg-tertiary-darker text-normal text-white rounded-md p-2 px-4 w-full"
               @click="submitBorrowForm">
               Xác nhận mượn
             </button>

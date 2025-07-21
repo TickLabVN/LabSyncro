@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { deviceKindService } from '~/app/services';
+import { deviceKindService } from '~/services';
 import { ITEM_WIDTH } from './constants';
 
 const props = defineProps<{
@@ -17,9 +17,9 @@ const totalItems = await deviceKindService.getTotalItems(props.category.id, {});
 const totalPages = computed(() => Math.ceil(totalItems / numberOfItemsShown.value!));
 const currentPage = ref(0);
 
-async function fetchItem (offset: number): Promise<{ thumbnailUrl: string, manufacturer: string | null, title: string, borrowableQuantity: number, unit: string, id: string } | undefined> {
+async function fetchItem(offset: number): Promise<{ thumbnailUrl: string, manufacturer: string | null, title: string, borrowableQuantity: number, unit: string, id: string } | undefined> {
   const pageNumberOfItem = Math.floor(offset / numberOfItemsShown.value!);
-  const offsetInPage = offset -  pageNumberOfItem * numberOfItemsShown.value!;
+  const offsetInPage = offset - pageNumberOfItem * numberOfItemsShown.value!;
   const res = await deviceKindService.getDeviceKindsByCategoryId(props.category.id, pageNumberOfItem, numberOfItemsShown.value!, {});
   const deviceKind = res.deviceKinds[offsetInPage];
   return deviceKind && {
@@ -34,12 +34,12 @@ async function fetchItem (offset: number): Promise<{ thumbnailUrl: string, manuf
 
 const listDirection = ref<'slide-right' | 'slide-left' | null>(null);
 
-function pageLeft () {
+function pageLeft() {
   listDirection.value = 'slide-right';
   currentPage.value = (currentPage.value - 1 + totalPages.value) % totalPages.value;
 }
 
-function pageRight () {
+function pageRight() {
   listDirection.value = 'slide-left';
   currentPage.value = (currentPage.value + 1) % totalPages.value;
 }
@@ -49,11 +49,13 @@ function pageRight () {
   <div class="mt-5">
     <div class="pl-4 pr-4 md:pl-28 md:pr-28 mb-1 sm:mb-3 flex gap-4 justify-between items-start">
       <h3 class="font-bold">{{ props.category.name }}</h3>
-      <NuxtLink class="hidden sm:block text-sm text-slate-dark min-w-16" :href="`/devices?categoryId=${props.category.id}`">
+      <NuxtLink class="hidden sm:block text-sm text-slate-dark min-w-16"
+        :href="`/devices?categoryId=${props.category.id}`">
         Xem thêm
       </NuxtLink>
     </div>
-    <NuxtLink class="block sm:hidden mb-5 pl-4 pr-4 text-sm text-slate-dark min-w-16" :href="`/devices?categoryId=${props.category.id}`">
+    <NuxtLink class="block sm:hidden mb-5 pl-4 pr-4 text-sm text-slate-dark min-w-16"
+      :href="`/devices?categoryId=${props.category.id}`">
       Xem thêm
     </NuxtLink>
     <div v-if="totalItems" ref="listRef" class="group flex justify-between px-5 items-center gap-5">
@@ -63,11 +65,10 @@ function pageRight () {
         <Icon aria-hidden name="i-heroicons-chevron-left" />
       </button>
       <TransitionGroup class="flex justify-around gap-2 min-h-64" :name="listDirection || ''" tag="div">
-          <div v-for="i in [...Array(numberOfItemsShown).keys()]" :key="i + currentPage * numberOfItemsShown!">
-            <DeviceSuspenseItem
-              v-if="i + currentPage * numberOfItemsShown! < totalItems" :width="`${ITEM_WIDTH}px`"
-              :fetch-fn="() => fetchItem(i + currentPage * numberOfItemsShown!)" />
-          </div>
+        <div v-for="i in [...Array(numberOfItemsShown).keys()]" :key="i + currentPage * numberOfItemsShown!">
+          <DeviceSuspenseItem v-if="i + currentPage * numberOfItemsShown! < totalItems" :width="`${ITEM_WIDTH}px`"
+            :fetch-fn="() => fetchItem(i + currentPage * numberOfItemsShown!)" />
+        </div>
       </TransitionGroup>
       <button
         class="opacity-0 group-hover:opacity-100 bg-secondary-dark flex items-center justify-center rounded-full w-8 h-8 text-tertiary-dark z-50"

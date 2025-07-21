@@ -1,4 +1,4 @@
-import type { RoleDetailDto, RoleWithStatsDto, UserResourceDto } from '~/shared/schemas';
+import type { RoleDetailDto, RoleWithStatsDto, UserResourceDto } from '~~/shared/schemas';
 
 export const userService = {
   async getUserById(id: string): Promise<UserResourceDto | undefined> {

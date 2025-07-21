@@ -2,7 +2,7 @@ import type {
   DeviceCheckerResourceDto,
   ListOfDeviceResourceDto,
   PrintQRCodeDto,
-} from '~/shared/schemas';
+} from '~~/shared/schemas';
 
 const { PRINT_LABELS_URL } =
   useRuntimeConfig();
