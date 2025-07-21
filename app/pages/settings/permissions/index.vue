@@ -38,7 +38,7 @@ onMounted(async () => {
           <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input class="pl-10 w-[300px]" placeholder="Tìm kiếm người dùng" />
         </div>
-        <Button class="bg-tertiary-darker !text-white text-normal w-24 hover:bg-blue-700" size="sm">
+        <Button class="bg-tertiary-darker text-white! text-normal w-24 hover:bg-blue-700" size="sm">
           Tạo mới
         </Button>
       </div>

@@ -70,7 +70,7 @@ const handleSave = async () => {
     <div class="flex-1 p-6">
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-semibold">{{ roleDetail?.name }}</h1>
-        <Button class="bg-tertiary-darker !text-white text-normal w-24 hover:bg-blue-700" size="sm"
+        <Button class="bg-tertiary-darker text-white! text-normal w-24 hover:bg-blue-700" size="sm"
           :disabled="isEqual(sortBy(selectedPermissions), sortBy(roleDetail?.permissions?.flatMap(p => p.actions.map(a => `${p.resource}-${a}`)) || []))"
           @click="handleSave">
           Lưu thay đổi

@@ -33,7 +33,7 @@ onMounted(async () => {
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
-    <main class="my-10 min-h-screen flex-1 bg-white p-6 rounded-lg shadow-sm">
+    <main class="my-10 min-h-screen flex-1 bg-white p-6 rounded-lg shadow-xs">
       <Tabs default-value="borrow" class="w-full">
         <TabsList class="flex items-center justify-start gap-6 bg-white mb-8">
           <TabsTrigger value="borrow"
@@ -45,10 +45,10 @@ onMounted(async () => {
             Đã trả ({{ returnCount }})
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="borrow" class="focus:outline-none">
+        <TabsContent value="borrow" class="focus:outline-hidden">
           <BorrowDeviceTable />
         </TabsContent>
-        <TabsContent value="return" class="focus:outline-none">
+        <TabsContent value="return" class="focus:outline-hidden">
           <ReturnDeviceTable />
         </TabsContent>
       </Tabs>

@@ -11,15 +11,15 @@ const { hasPermission, hasRole } = usePermission();
       <DropdownMenuTrigger>
         <div class="flex items-center cursor-pointer">
           <div
-            class="h-9 w-9 rounded-full border-slate-dark border-[2px] bg-primary-lighter relative"
+            class="h-9 w-9 rounded-full border-slate-dark border-2 bg-primary-lighter relative"
           >
             <img
-              class="h-[100%] aspect-auto inline-block rounded-full"
+              class="h-full aspect-auto inline-block rounded-full"
               :src="data?.user?.image || ''"
               alt="User's avatar"
             >
             <div
-              class="w-3 h-3 absolute bg-safe-darker rounded-full z-50 border-white border-[2px] top-6 right-[-2px]"
+              class="w-3 h-3 absolute bg-safe-darker rounded-full z-50 border-white border-2 top-6 right-[-2px]"
               aria-hidden
             />
           </div>
@@ -61,7 +61,7 @@ const { hasPermission, hasRole } = usePermission();
         </NuxtLink>
 
         <DropdownMenuItem
-          class="text-red-600 cursor-pointer hover:!bg-red-400"
+          class="text-red-600 cursor-pointer hover:bg-red-400!"
           @click="signOut({ callbackUrl: '/' })"
         >
           <span class="text-normal">Đăng xuất</span>

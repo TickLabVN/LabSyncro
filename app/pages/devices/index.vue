@@ -52,14 +52,14 @@ const allCategories = await categorySvc.getAll();
           <div class="text-normal flex flex-col">
             <p class="bg-black text-white min-w-[190px] px-5 py-1">Danh mục</p>
             <NuxtLink
-              :class="`relative text-left text-black min-w-[190px] px-5 py-1 pr-10 line-clamp-1 border-b-[1px] border-b-slate-light ${categoryId === null ? 'bg-slate-light' : 'bg-white'}`"
+              :class="`relative text-left text-black min-w-[190px] px-5 py-1 pr-10 line-clamp-1 border-b border-b-slate-light ${categoryId === null ? 'bg-slate-light' : 'bg-white'}`"
               href="/devices">
               Tất cả
               <Icon v-if="categoryId === null" aria-hidden name="i-heroicons-check" class="absolute top-1.5 right-2" />
             </NuxtLink>
             <NuxtLink
                v-for="c in allCategories" :key="c.id.toString()"
-              :class="`relative text-left text-black min-w-[190px] px-5 py-1 pr-10 line-clamp-1 border-b-[1px] border-b-slate-light ${categoryId === c.id ? 'bg-slate-light' : 'bg-white'}`"
+              :class="`relative text-left text-black min-w-[190px] px-5 py-1 pr-10 line-clamp-1 border-b border-b-slate-light ${categoryId === c.id ? 'bg-slate-light' : 'bg-white'}`"
               :href="categoryId === c.id ? '/devices' : `/devices?categoryId=${c.id}`">
               {{ c.name }}
               <Icon 

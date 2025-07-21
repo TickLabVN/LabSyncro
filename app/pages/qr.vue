@@ -114,7 +114,7 @@ function shareQR() {
 
 <template>
   <div class="md:container mx-auto md:max-w-xl">
-    <Card class="w-full overflow-hidden backdrop-blur-sm bg-white/90 shadow-lg">
+    <Card class="w-full overflow-hidden backdrop-blur-xs bg-white/90 shadow-lg">
       <CardHeader class="pb-0">
         <div class="flex items-center justify-center gap-2">
           <QrCode class="h-5 w-5 text-primary" />
@@ -135,7 +135,7 @@ function shareQR() {
           >
             <div
               :key="qrDataUrl"
-              class="relative flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary-lighter/20 rounded-lg p-4 border border-primary/20 w-[300px] h-[300px] md:w-[500px] md:h-[500px]"
+              class="relative flex items-center justify-center bg-linear-to-br from-primary/5 to-primary-lighter/20 rounded-lg p-4 border border-primary/20 w-[300px] h-[300px] md:w-[500px] md:h-[500px]"
             >
               <div
                 v-if="isLoading"

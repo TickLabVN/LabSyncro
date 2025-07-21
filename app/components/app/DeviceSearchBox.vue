@@ -43,7 +43,7 @@ function unfocusSearchItem() {
   <div ref="dropdown" class="relative">
     <div class="relative">
       <input :value="searchText"
-        class="bg-white text-primary-light placeholder:text-primary-light border-2 h-11 w-[100%] pl-10 pr-3 rounded-md text-md placeholder:text-normal"
+        class="bg-white text-primary-light placeholder:text-primary-light border-2 h-11 w-full pl-10 pr-3 rounded-md text-md placeholder:text-normal"
         type="search" placeholder="Tên loại thiết bị" @keydown.down="focusNextSearchItem"
         @keydown.up="focusPrevSearchItem" @keydown.enter="goToSearchItem" @keydown.esc="unfocusSearchItem"
         @input="(e) => updateSearchText((e.target as any).value)">

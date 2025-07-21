@@ -103,7 +103,7 @@ onMounted(async () => {
           <Input class="pl-10 w-[250px]" placeholder="Tìm kiếm người dùng" />
         </div>
 
-        <Button class="bg-tertiary-darker !text-white text-normal w-24 hover:bg-blue-700" size="sm">Mời</Button>
+        <Button class="bg-tertiary-darker text-white! text-normal w-24 hover:bg-blue-700" size="sm">Mời</Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger>

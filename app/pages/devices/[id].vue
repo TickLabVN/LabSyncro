@@ -64,7 +64,7 @@ watch(searchText, async () => {
           <div class="text-sm flex flex-col shadow-lg">
             <p class="bg-black text-white min-w-[190px] xl:min-w-[340px] px-5 py-1">Danh mục</p>
             <NuxtLink v-for="category in allCategories" :key="category.id"
-              :class="`relative text-left text-black min-w-[190px] px-5 py-1 pr-10 line-clamp-1 border-b-[1px] border-b-slate-light ${deviceKindMeta.categoryId === category.id ? 'bg-slate-light' : 'bg-white'}`"
+              :class="`relative text-left text-black min-w-[190px] px-5 py-1 pr-10 line-clamp-1 border-b border-b-slate-light ${deviceKindMeta.categoryId === category.id ? 'bg-slate-light' : 'bg-white'}`"
               :href="`/devices?categoryId=${category.id}`">
               {{ category.name }}
               <Icon v-if="deviceKindMeta.categoryId === category.id" aria-hidden name="i-heroicons-check"
@@ -74,11 +74,11 @@ watch(searchText, async () => {
         </div>
         <div class="flex-1">
           <section class="bg-white p-10 flex flex-col md:flex-row gap-8 md:gap-16">
-            <div class="w-[100%] md:max-w-[300px]">
-              <NuxtImg :src="deviceKindMeta?.mainImage" class="border-[1px] border-gray-200" />
+            <div class="w-full md:max-w-[300px]">
+              <NuxtImg :src="deviceKindMeta?.mainImage" class="border border-gray-200" />
               <div class="grid grid-cols-4 gap-2 mt-5">
                 <NuxtImg v-for="img in deviceKindMeta?.subImages" :key="img" :src="img"
-                  class="border-[1px] border-gray-200" />
+                  class="border border-gray-200" />
               </div>
             </div>
             <div class="flex-1 flex flex-col">
@@ -94,10 +94,10 @@ watch(searchText, async () => {
                 </div>
                 <div class="mt-8 font-semibold">
                   <span v-if="deviceKindMeta?.borrowableQuantity > 0"
-                    class="border-[1px] border-safe-darker bg-green-50 text-green-500 p-1.5 rounded-sm">
+                    class="border border-safe-darker bg-green-50 text-green-500 p-1.5 rounded-sm">
                     Sẵn có
                   </span>
-                  <span v-else class="border-[1px] border-danger-darker bg-red-50 text-red-500 p-1.5 rounded-sm">
+                  <span v-else class="border border-danger-darker bg-red-50 text-red-500 p-1.5 rounded-sm">
                     Không có sẵn
                   </span>
                 </div>
@@ -107,7 +107,7 @@ watch(searchText, async () => {
                 </div>
               </div>
               <button
-                class="bg-green-500 text-white py-1.5 px-1.5 flex justify-center items-center gap-2 w-[100%] mt-auto">
+                class="bg-green-500 text-white py-1.5 px-1.5 flex justify-center items-center gap-2 w-full mt-auto">
                 <Icon aria-hidden name="i-heroicons-heart" class="text-xl" />
                 <span>Yêu thích</span>
               </button>

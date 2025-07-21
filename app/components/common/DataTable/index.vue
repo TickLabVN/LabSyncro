@@ -97,7 +97,7 @@ onMounted(() => filterBoxRef.value?.focus());
 
 <template>
   <div>
-    <div v-if="isDeleteModalActive" class="fixed top-4 z-50 left-0 w-[100vw] h-[100vh] p-10 flex justify-end items-end">
+    <div v-if="isDeleteModalActive" class="fixed top-4 z-50 left-0 w-screen h-screen p-10 flex justify-end items-end">
       <div class="bg-white p-4 shadow-[0_0px_16px_-3px_rgba(0,0,0,0.3)]">
         <p class="mb-4">Bạn có chắc chắn muốn xoá {{ rowsToDelete.length }} bản ghi?</p>
         <div class="flex gap-3 justify-end">

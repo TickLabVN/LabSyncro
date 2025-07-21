@@ -15,8 +15,8 @@ export default defineNuxtConfig({
     'shadcn-nuxt',
     '@sidebase/nuxt-auth',
   ],
-  build: { 
-    transpile: ['vue-toastification'] 
+  build: {
+    transpile: ['vue-toastification']
   },
   nitro: {
     preset: 'bun',
@@ -49,10 +49,10 @@ export default defineNuxtConfig({
     },
   },
   eslint: {},
-  css: ['~/app/assets/css/fonts.css', '~/app/assets/css/main.css', 'vue-toastification/dist/index.css'],
+  css: ['~/assets/css/fonts.css', '~/assets/css/main.css', 'vue-toastification/dist/index.css'],
   postcss: {
     plugins: {
-      tailwindcss: {},
+      '@tailwindcss/postcss': {},
       autoprefixer: {},
     },
   },
@@ -97,7 +97,5 @@ export default defineNuxtConfig({
       title: 'Labsyncro',
     },
   },
-  devServer: {
-    host: '0.0.0.0',
-  },
+  devServer: { host: '0.0.0.0' },
 });

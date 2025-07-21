@@ -12,7 +12,7 @@ definePageMeta({
   <div
     class="md:min-h-screen flex items-center justify-center bg-gray-200 p-0 md:p-4"
   >
-    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-sm">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-xs">
       <div class="space-y-2">
         <h2 class="text-center text-2xl font-bold tracking-tight text-gray-900">
           Welcome to LabSyncro

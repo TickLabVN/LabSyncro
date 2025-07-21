@@ -13,9 +13,9 @@ const item = await props.fetchFn();
 </script>
 
 <template>
-  <div v-if="item" class="cursor-pointer border-[1px] hover:border-[1px] hover:border-tertiary-dark">
+  <div v-if="item" class="cursor-pointer border hover:border hover:border-tertiary-dark">
     <NuxtLink :href="`/devices/${item.id}`">
-      <div class="w-[100%] h-32 overflow-hidden">
+      <div class="w-full h-32 overflow-hidden">
         <NuxtImg :src="item.thumbnailUrl" class="object-cover" />
       </div>
       <div class="p-2 pt-5 text-ss h-28 flex flex-col">

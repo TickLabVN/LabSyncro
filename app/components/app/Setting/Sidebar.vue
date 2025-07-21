@@ -107,7 +107,7 @@ const handleBackToSimpleSidebar = (openNewTab: boolean) => {
           <div class="flex items-center p-2 border-b">
             <span class="text-normal text-gray-500">{{data?.user?.roles.map(role => role.name).join(', ')}}</span>
           </div>
-          <DropdownMenuItem class="text-red-600 cursor-pointer hover:!bg-red-400"
+          <DropdownMenuItem class="text-red-600 cursor-pointer hover:bg-red-400!"
             @click="signOut({ callbackUrl: '/' })">
             <span class="text-normal">Đăng xuất</span>
           </DropdownMenuItem>

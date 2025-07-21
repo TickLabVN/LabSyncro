@@ -27,7 +27,7 @@ watch(() => [props.kindId], async () => {
 
 <template>
   <div v-if="deviceKindMeta && kindId"
-    class="fixed z-50 top-0 left-0 w-[100vw] h-[100vh] flex justify-center items-center">
+    class="fixed z-50 top-0 left-0 w-screen h-screen flex justify-center items-center">
     <div class="bg-white shadow-[0_0px_16px_1px_rgba(0,0,0,0.3)] w-[400px] sm:w-[90vw] p-6">
       <div class="flex justify-between gap-3 items-center">
         <h2 class="text-lg"> {{ deviceKindMeta.name }} </h2>

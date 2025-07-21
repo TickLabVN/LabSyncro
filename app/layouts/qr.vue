@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen relative bg-gradient-to-b from-primary-darker/10 to-gray-100 flex items-center justify-center p-4 overflow-hidden"
+    class="min-h-screen relative bg-linear-to-b from-primary-darker/10 to-gray-100 flex items-center justify-center p-4 overflow-hidden"
   >
     <div class="absolute inset-0 z-0">
       <div
@@ -51,7 +51,7 @@
   transition: all 0.3s ease-in-out;
 }
 
-.bg-gradient-to-b {
+.bg-linear-to-b {
   background-size: 200% 200%;
   animation: gradient 15s ease infinite;
 }
