@@ -70,7 +70,8 @@ const handleSave = async () => {
     <div class="flex-1 p-6">
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-semibold">{{ roleDetail?.name }}</h1>
-        <Button class="bg-tertiary-darker !text-white text-normal w-24 hover:bg-blue-700" size="sm"
+        <Button
+class="bg-tertiary-darker !text-white text-normal w-24 hover:bg-blue-700" size="sm"
           :disabled="isEqual(sortBy(selectedPermissions), sortBy(roleDetail?.permissions?.flatMap(p => p.actions.map(a => `${p.resource}-${a}`)) || []))"
           @click="handleSave">
           Lưu thay đổi
@@ -173,9 +174,11 @@ const handleSave = async () => {
               <div />
             </div>
             <ul class="space-y-2">
-              <li v-for="perm in roleDetail?.permissions" :key="perm.resource"
+              <li
+v-for="perm in roleDetail?.permissions" :key="perm.resource"
                 class="grid grid-cols-[repeat(3,40px)_1fr] gap-x-2 items-center">
-                <Checkbox v-for="action in ['use', 'edit', 'own']" :key="action"
+                <Checkbox
+v-for="action in ['use', 'edit', 'own']" :key="action"
                   :checked="selectedPermissions.includes(`${perm.resource}-${action}`)"
                   @update:checked="togglePermission(perm.resource, action)" />
                 <div class="flex items-center space-x-2">

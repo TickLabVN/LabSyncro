@@ -52,7 +52,7 @@
     "@types/selenium-webdriver": "^4.1.28",
     "@types/uuid4": "^2.0.3",
     "autoprefixer": "^10.4.21",
-    "cheerio": "^1.1.0",
+    "cheerio": "^1.1.1",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.31.0",
     "folder-hash": "^4.1.1",

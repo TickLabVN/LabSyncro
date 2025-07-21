@@ -99,9 +99,9 @@ export const columns: AugmentedColumnDef<BorrowReturnDevice>[] = [
         'span',
         {
           class: `inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusMap[row.original.status] === 'Đúng hạn'
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
-            }`,
+            ? 'bg-green-100 text-green-800'
+            : 'bg-red-100 text-red-800'
+          }`,
         },
         statusMap[row.original.status],
       ),

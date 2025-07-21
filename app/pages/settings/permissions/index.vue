@@ -53,7 +53,8 @@ onMounted(async () => {
       </TableHeader>
       <TableBody>
         <TableRow v-for="row in permissions" :key="row.key">
-          <TableCell class="font-medium cursor-pointer hover:text-tertiary-darker"
+          <TableCell
+class="font-medium cursor-pointer hover:text-tertiary-darker"
             @click="(event) => handleRowClick(row.key, !!event.ctrlKey)">
             <span>{{ row.name }}</span>
           </TableCell>
@@ -62,12 +63,14 @@ onMounted(async () => {
             <div class="flex items-center space-x-2">
               <span class="text-blue-600">{{ row.users }}</span>
               <div class="flex -space-x-2">
-                <Avatar v-for="(avatar, index) in row.avatarUrl.slice(0, 3)" :key="index"
+                <Avatar
+v-for="(avatar, index) in row.avatarUrl.slice(0, 3)" :key="index"
                   class="h-6 w-6 ring-2 ring-background">
                   <AvatarImage :src="avatar" />
                   <AvatarFallback>UN</AvatarFallback>
                 </Avatar>
-                <Avatar v-if="row.avatarUrl.length > 3"
+                <Avatar
+v-if="row.avatarUrl.length > 3"
                   class="h-6 w-6 bg-tertiary-darker text-white ring-2 ring-background">
                   <AvatarFallback>+{{ row.avatarUrl.length - 3 }}</AvatarFallback>
                 </Avatar>

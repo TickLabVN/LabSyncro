@@ -120,34 +120,34 @@ export default defineEventHandler<
     LIMIT ${db.param(length)}
     OFFSET ${db.param(offset)}
     `.run(dbPool)).map(
-      ({
-        device_kind_id,
-        device_kind_name,
-        main_image,
-        sub_images,
-        borrowed_place,
-        returned_place,
-        borrowed_at,
-        expected_returned_at,
-        returned_at,
-        status,
-        device_status,
-        note,
-      }) => ({
-        id: device_kind_id,
-        name: device_kind_name,
-        mainImage: main_image,
-        subImages: sub_images,
-        borrowedPlace: borrowed_place,
-        returnedPlace: returned_place,
-        borrowedAt: borrowed_at,
-        expectedReturnedAt: expected_returned_at,
-        returnedAt: returned_at,
-        status,
-        deviceStatus: device_status,
-        note,
-      }),
-    );
+    ({
+      device_kind_id,
+      device_kind_name,
+      main_image,
+      sub_images,
+      borrowed_place,
+      returned_place,
+      borrowed_at,
+      expected_returned_at,
+      returned_at,
+      status,
+      device_status,
+      note,
+    }) => ({
+      id: device_kind_id,
+      name: device_kind_name,
+      mainImage: main_image,
+      subImages: sub_images,
+      borrowedPlace: borrowed_place,
+      returnedPlace: returned_place,
+      borrowedAt: borrowed_at,
+      expectedReturnedAt: expected_returned_at,
+      returnedAt: returned_at,
+      status,
+      deviceStatus: device_status,
+      note,
+    }),
+  );
 
   const [{ total_records: totalRecords }] = await db.sql`
     SELECT COUNT(*) as total_records
@@ -163,14 +163,14 @@ export default defineEventHandler<
       r_borrow.actor_id = ${db.param(userId)}
       AND rd.return_id IS NOT NULL
       ${searchText !== undefined && searchFields?.length
-      ? db.sql`AND (
+    ? db.sql`AND (
           (${db.param(searchFields.includes('device_kind_id'))} AND dk.id ILIKE ${db.param(`%${searchText}%`)}) OR
           (${db.param(searchFields.includes('device_kind_name'))} AND strip_vietnamese_accents(dk.name) ILIKE strip_vietnamese_accents(${db.param(`%${searchText}%`)})) OR
           (${db.param(searchFields.includes('borrowed_place'))} AND strip_vietnamese_accents(CONCAT(l_borrow.room, ', ', l_borrow.branch)) ILIKE strip_vietnamese_accents(${db.param(`%${searchText}%`)})) OR
           (${db.param(searchFields.includes('returned_place'))} AND l_expected.id IS NOT NULL AND strip_vietnamese_accents(CONCAT(l_expected.room, ', ', l_expected.branch)) ILIKE strip_vietnamese_accents(${db.param(`%${searchText}%`)}))
         )`
-      : db.raw('')
-    }
+    : db.raw('')
+}
     `.run(dbPool);
 
   const totalPages = Math.ceil(totalRecords / length);

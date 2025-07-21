@@ -99,13 +99,13 @@ export default defineEventHandler<
       place
     FROM ready_borrowed_devices
     ${searchText !== undefined && searchFields?.length
-        ? db.raw(`WHERE (
+      ? db.raw(`WHERE (
       (${searchFields.includes('device_kind_id')} AND device_kind_id ILIKE '%${searchText}%') OR
       (${searchFields.includes('device_kind_name')} AND strip_vietnamese_accents(device_kind_name) ILIKE strip_vietnamese_accents('%${searchText}%')) OR
       (${searchFields.includes('place')} AND strip_vietnamese_accents(place) ILIKE strip_vietnamese_accents('%${searchText}%'))
     )`)
-        : db.raw('')
-      }
+      : db.raw('')
+    }
     ORDER BY ${sortField ? db.raw(`${sortField}`) : db.raw('device_kind_id')} ${desc ? db.raw('DESC') : db.raw('ASC')}   
     LIMIT ${db.param(length)}
     OFFSET ${db.param(offset)}
@@ -138,13 +138,13 @@ export default defineEventHandler<
       AND d.${'status'} = 'healthy'
       AND d.${'deleted_at'} IS NULL
       ${searchText !== undefined
-      ? db.raw(`AND (
+    ? db.raw(`AND (
         (${searchFields?.includes('device_kind_id') || false} AND dk.${'id'} ILIKE '%${searchText}%') OR
         (${searchFields?.includes('device_kind_name') || false} AND strip_vietnamese_accents(dk.${'name'}) ILIKE strip_vietnamese_accents('%${searchText}%')) OR
         (${searchFields?.includes('place') || false} AND strip_vietnamese_accents(CONCAT(l.${'room'}, ', ', l.${'branch'})) ILIKE strip_vietnamese_accents('%${searchText}%'))
       )`)
-      : db.raw('')
-    }
+    : db.raw('')
+}
   `.run(dbPool);
 
   const totalPages = Math.ceil(totalRecords / length);

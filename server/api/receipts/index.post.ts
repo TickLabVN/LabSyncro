@@ -36,24 +36,24 @@ export default defineApi({
   if (hasUnhealthyDevices > 0) throw badRequest('Only healthy devices can be borrowed');
 
   await
-    // FIXME: Need to investigate the driver to see if we should retry on serialization error
-    await db.serializable(dbPool, async (dbClient) => {
-      const [{ id: receiptId }] = await db.sql`
+  // FIXME: Need to investigate the driver to see if we should retry on serialization error
+  await db.serializable(dbPool, async (dbClient) => {
+    const [{ id: receiptId }] = await db.sql`
       INSERT INTO ${'receipts'} (id, borrower_id, borrowed_lab_id, borrow_checker_id)
       VALUES (${_receiptId ? db.param(_receiptId) : db.Default}, ${db.param(borrowerId)}, ${db.param(borrowLabId)}, ${db.param(checkerId)})
       RETURNING id;
     `.run(dbClient);
 
-      await db.sql`
+    await db.sql`
       INSERT INTO ${'receipts_devices'} (receipt_id, device_id, borrow_id, expected_returned_at, expected_returned_lab_id)
       SELECT ${db.param(receiptId)}, id, ${db.param(activityId)}, ${db.param(expectedReturnDate)}, ${db.param(expectedReturnLabId)}
       FROM unnest(${db.param(deviceIds)}::TEXT[]) as devices(id);
     `.run(dbClient);
 
-      await db.sql`
+    await db.sql`
       UPDATE ${'devices'}
       SET status = 'borrowing'
       WHERE ${'id'} = ANY(${db.param(deviceIds)})
     `.run(dbClient);
-    });
+  });
 });

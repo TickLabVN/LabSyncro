@@ -9,7 +9,6 @@ export default withNuxt({
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': 'error',
-    '@typescript-eslint/no-unused-imports': 'error',
     'space-before-function-paren': ['off'],
     'vue/multi-word-component-names': ['off'],
   },

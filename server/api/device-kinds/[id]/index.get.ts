@@ -1,5 +1,4 @@
 import { Type } from '@sinclair/typebox';
-import { Value } from '@sinclair/typebox/value';
 import { DeviceKindDto } from '~~/shared/schemas/deviceKind';
 
 export default defineApi({
@@ -23,14 +22,14 @@ export default defineApi({
       },
       category: { select: { id: true, name: true } },
     },
-  })
+  });
   const coverImage = deviceKind.images.find(img => img.type === 'COVER');
   const coverImageUrl = coverImage ? getImageUrl(coverImage.imageId) : '';
   const galleryImageUrls = deviceKind.images.reduce((acc, img) => {
     if (img.type === 'GALLERY')
       acc.push(getImageUrl(img.imageId));
     return acc;
-    }, [] as string[]);
+  }, [] as string[]);
 
   const deviceKindDto: DeviceKindDto = {
     id: deviceKind.id,

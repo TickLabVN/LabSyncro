@@ -68,11 +68,11 @@ export default defineEventHandler<
       ${labId !== undefined ? db.raw(`devices.lab_id = '${labId}'`) : db.raw('TRUE')} AND
       ${'devices'}.${'deleted_at'} IS NULL
       ${searchText !== undefined
-      ? db.raw(`AND (
+    ? db.raw(`AND (
           (${searchFields?.includes('device_id') || false} AND strip_vietnamese_accents(devices.kind || '/' || devices.id) ILIKE strip_vietnamese_accents('%${searchText}%'))
         )`)
-      : db.raw('')
-    }
+    : db.raw('')
+}
     ORDER BY ${sortField ? db.raw(`${sortField} ${desc ? 'DESC' : 'ASC'}, `) : db.raw('')} ${'devices'}.${'status'} ASC
     LIMIT ${db.param(length)}
     OFFSET ${db.param(offset)}
@@ -86,11 +86,11 @@ export default defineEventHandler<
       ${labId !== undefined ? db.raw(`devices.lab_id = '${labId}'`) : db.raw('TRUE')} AND
       ${'devices'}.${'deleted_at'} IS NULL
       ${searchText !== undefined
-      ? db.raw(`AND (
+    ? db.raw(`AND (
           (${searchFields?.includes('device_id') || false} AND strip_vietnamese_accents(devices.id) ILIKE strip_vietnamese_accents('%${searchText}%'))
         )`)
-      : db.raw('')
-    }
+    : db.raw('')
+}
   `.run(dbPool);
 
   const totalPages = Math.ceil(totalRecords / length);

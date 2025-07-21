@@ -70,14 +70,16 @@ const handleBackToSimpleSidebar = (openNewTab: boolean) => {
 
       <div v-else class="w-64 border-r bg-background p-4 space-y-4 h-full">
         <div class="flex items-center space-x-2 mb-6">
-          <Button variant="ghost" class="w-full justify-start"
+          <Button
+variant="ghost" class="w-full justify-start"
             @click="(event) => handleBackToSimpleSidebar(!!event.ctrlKey)">
             <ChevronLeft class="mr-2 h-4 w-4" />
             <span class="text-md">Back</span>
           </Button>
         </div>
         <div v-for="section in sections" :key="section.key" class="w-full">
-          <Button variant="ghost" :class="['w-full justify-start', activeSection === section.key ? 'bg-accent' : '']"
+          <Button
+variant="ghost" :class="['w-full justify-start', activeSection === section.key ? 'bg-accent' : '']"
             @click="(event) => setActiveSection(section.key, !!event.ctrlKey)">
             <span class="flex items-center text-normal">
               {{ section.name }}
@@ -107,7 +109,8 @@ const handleBackToSimpleSidebar = (openNewTab: boolean) => {
           <div class="flex items-center p-2 border-b">
             <span class="text-normal text-gray-500">{{data?.user?.roles.map(role => role.name).join(', ')}}</span>
           </div>
-          <DropdownMenuItem class="text-red-600 cursor-pointer hover:!bg-red-400"
+          <DropdownMenuItem
+class="text-red-600 cursor-pointer hover:!bg-red-400"
             @click="signOut({ callbackUrl: '/' })">
             <span class="text-normal">Đăng xuất</span>
           </DropdownMenuItem>

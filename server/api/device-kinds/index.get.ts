@@ -53,7 +53,7 @@ export default defineApi({
       coverImageUrl,
       galleryImageUrls,
       description: item.description,
-    }
+    };
   });
 
   return { data: deviceKinds, meta };
