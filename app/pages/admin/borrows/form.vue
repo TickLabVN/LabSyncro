@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import moment from 'moment';
 import type { ToastInterface } from 'vue-toastification';
-import { useToast } from 'vue-toastification';
+import useToast from 'vue-toastification';
 import {
   deviceKindService,
   deviceService,

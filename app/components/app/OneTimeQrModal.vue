@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, watch } from 'vue';
-import { useToast } from 'vue-toastification';
+import useToast from 'vue-toastification';
 
 const props = defineProps<{
   userId: string;

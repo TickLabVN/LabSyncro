@@ -6,7 +6,7 @@ import {
   RefreshCw,
   ArrowLeft,
 } from 'lucide-vue-next';
-import { useToast } from 'vue-toastification';
+import useToast from 'vue-toastification';
 
 definePageMeta({
   middleware: ['permission'],

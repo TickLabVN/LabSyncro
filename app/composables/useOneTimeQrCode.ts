@@ -1,6 +1,6 @@
 import QRCode from 'qrcode';
-import { useToast } from 'vue-toastification';
-import { authService } from '~/app/services/auth';
+import useToast from 'vue-toastification';
+import { authService } from '~/services/auth';
 
 const toast = useToast();
 

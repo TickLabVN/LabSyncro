@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { isEqual, sortBy } from 'lodash';
 import { ChevronDown, Monitor, Search } from 'lucide-vue-next';
-import { useToast } from 'vue-toastification';
+import useToast from 'vue-toastification';
 import { userService } from '~/services';
 import type { RoleDetailDto } from '~~/shared/schemas';
 

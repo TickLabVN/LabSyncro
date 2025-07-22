@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CheckCircle, XCircle } from 'lucide-vue-next';
-import { useToast } from 'vue-toastification';
+import useToast from 'vue-toastification';
 import { authService, laboratoryService } from '~/services';
 
 definePageMeta({
