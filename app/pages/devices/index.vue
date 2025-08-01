@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { debounce } from 'lodash-es';
-import { categorySvc } from '~/services';
+import { categorySvc } from '~/apis';
 import type { CategoryDto } from '~~/shared/schemas';
 
 definePageMeta({ middleware: ['permission'] });
@@ -42,7 +42,8 @@ const allCategories = await categorySvc.getAll();
           <p class="font-semibold">/</p>
         </BreadcrumbSeparator>
         <BreadcrumbItem>
-          <NuxtLink class="text-normal font-bold underline text-black" :href="`/devices?categoryId=${categoryId}`">{{ category?.name ?? "Tất cả" }}</NuxtLink>
+          <NuxtLink class="text-normal font-bold underline text-black" :href="`/devices?categoryId=${categoryId}`">{{
+            category?.name ?? "Tất cả" }}</NuxtLink>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -57,15 +58,11 @@ const allCategories = await categorySvc.getAll();
               Tất cả
               <Icon v-if="categoryId === null" aria-hidden name="i-heroicons-check" class="absolute top-1.5 right-2" />
             </NuxtLink>
-            <NuxtLink
-               v-for="c in allCategories" :key="c.id.toString()"
+            <NuxtLink v-for="c in allCategories" :key="c.id.toString()"
               :class="`relative text-left text-black min-w-[190px] px-5 py-1 pr-10 line-clamp-1 border-b border-b-slate-light ${categoryId === c.id ? 'bg-slate-light' : 'bg-white'}`"
               :href="categoryId === c.id ? '/devices' : `/devices?categoryId=${c.id}`">
               {{ c.name }}
-              <Icon 
-                v-if="categoryId === c.id" 
-                aria-hidden name="i-heroicons-check"
-                class="absolute top-1.5 right-2" />
+              <Icon v-if="categoryId === c.id" aria-hidden name="i-heroicons-check" class="absolute top-1.5 right-2" />
             </NuxtLink>
           </div>
         </div>
@@ -75,12 +72,10 @@ const allCategories = await categorySvc.getAll();
               {{ category?.name ?? "Tất cả thiết bị" }}
             </h2>
             <div v-if="!searchValue" class="relative items-center flex gap-4 mx-auto sm:mx-0">
-              <input 
-                :value="search" type="search" placeholder="Nhập tên thiết bị"
+              <input :value="search" type="search" placeholder="Nhập tên thiết bị"
                 class="border-gray-300 border rounded-sm p-2 pl-10 md:w-[350px] lg:w-[400px]"
                 @input="(e) => setSearch(e.target?.value)">
-              <Icon 
-                aria-hidden class="absolute left-3 top-[12px] text-xl text-primary-dark"
+              <Icon aria-hidden class="absolute left-3 top-[12px] text-xl text-primary-dark"
                 name="i-heroicons-magnifying-glass" />
             </div>
           </div>

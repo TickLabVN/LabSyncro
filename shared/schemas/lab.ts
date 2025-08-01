@@ -1,7 +1,14 @@
-import { Type } from '@sinclair/typebox';
+import { Type, type Static } from '@sinclair/typebox';
 import { Nullable } from './null';
 
-const LabAdminDto = Type.Object({
+export const LabQuery = Type.Object({ 
+  search: Type.Optional(Type.String()), 
+  adminId: Type.Optional(Type.String()) 
+});
+export type LabQuery = Static<typeof LabQuery>;
+
+// Response
+const AdminDto = Type.Object({
   id: Type.String(),
   name: Type.String(),
   tel: Nullable(Type.String()),
@@ -13,8 +20,9 @@ export const LabDto = Type.Object({
   name: Type.String(),
   room: Type.String(),
   timetable: Type.Record(Type.String(), Type.Array(Type.String())),
-  admin: Nullable(LabAdminDto),
+  admin: Nullable(AdminDto),
 });
+export type LabDto = Static<typeof LabDto>;
 
 export const AdminLabDto = Type.Object({
   id: Type.String(),

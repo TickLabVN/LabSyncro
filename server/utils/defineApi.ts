@@ -1,8 +1,9 @@
 import type { Static, TSchema } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
 import type { H3Event } from 'h3';
-import type { UserRole } from '../datasources/prisma';
 import { getToken } from '#auth';
+import type { JWT } from 'next-auth/jwt';
+import type { UserRole } from '../db/prisma/client';
 
 type ApiDefinition<
   TParams extends TSchema | undefined = undefined,
@@ -32,6 +33,7 @@ export function defineApi<
     routerParams: TParams extends TSchema ? Static<TParams> : unknown;
     query: TQuery extends TSchema ? Static<TQuery> : unknown;
     body: TBody extends TSchema ? Static<TBody> : unknown;
+    context: H3Event['context'] & { auth: JWT }
   }) => Promise<ApiResponse<TResponse>>
 ) {
   return defineEventHandler<Promise<ApiResponse<TResponse>>>(async (event) => {

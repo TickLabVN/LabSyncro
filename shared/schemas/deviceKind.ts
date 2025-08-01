@@ -6,6 +6,7 @@ import { CategoryDto } from './category';
 export const DeviceKindQuery = PaginateQuery(
   Type.Object({
     categoryId: Type.Optional(Type.Number()),
+    labId: Type.Optional(Type.String()),
     search: Type.Optional(Type.String()),
   }),
 );
@@ -26,11 +27,11 @@ export const DeviceKindDto = Type.Object({
 });
 export type DeviceKindDto = Static<typeof DeviceKindDto>;
 
-export const LabDeviceQuantityDto = Type.Object({
+export const DeviceQuantityDto = Type.Object({
   id: Type.String(),
   name: Type.String(),
   branch: Type.String(),
   room: Type.String(),
   borrowableQuantity: Type.Number(),
 });
-export type LabDeviceQuantityDto = Static<typeof LabDeviceQuantityDto>;
+export type DeviceQuantityDto = Static<typeof DeviceQuantityDto>;

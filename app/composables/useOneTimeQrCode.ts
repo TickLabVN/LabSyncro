@@ -1,6 +1,6 @@
 import QRCode from 'qrcode';
 import useToast from 'vue-toastification';
-import { authService } from '~/services/auth';
+import { auth } from '~/apis/auth';
 
 const toast = useToast();
 
@@ -192,7 +192,7 @@ export function useOneTimeQrCode() {
       }
 
       try {
-        const result = await authService.verifyQrToken(token, userId, timestamp);
+        const result = await auth.verifyQrToken(token, userId, timestamp);
         return {
           userId,
           user: result.user,

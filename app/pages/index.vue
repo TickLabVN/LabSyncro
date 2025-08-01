@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { deviceService } from '~/services';
+import { deviceService } from '~/apis';
 
 definePageMeta({
   middleware: ['permission'],

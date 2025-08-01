@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { deviceKindService } from '~/services';
+import { deviceKindService } from '~/apis';
 import { ITEM_WIDTH } from './constants';
 
 const props = defineProps<{

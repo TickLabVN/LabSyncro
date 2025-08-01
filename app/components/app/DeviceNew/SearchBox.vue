@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { deviceKindService } from '~/services';
+import { deviceKindService } from '~/apis';
 
 const emits = defineEmits<{
   'device-select': [any],

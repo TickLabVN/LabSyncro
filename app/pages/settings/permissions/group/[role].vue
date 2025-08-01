@@ -2,7 +2,7 @@
 import { isEqual, sortBy } from 'lodash';
 import { ChevronDown, Monitor, Search } from 'lucide-vue-next';
 import useToast from 'vue-toastification';
-import { userService } from '~/services';
+import { userService } from '~/apis';
 import type { RoleDetailDto } from '~~/shared/schemas';
 
 definePageMeta({

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { laboratoryService } from '~/services';
+import { lab } from '~/apis';
 
 const emit = defineEmits<{
   (
@@ -17,7 +17,7 @@ const error = ref('');
 
 onMounted(async () => {
   try {
-    const response = await laboratoryService.getLabsManagedByAdmin(0, 500, {});
+    const response = await lab.getLabsManagedByAdmin(0, 500, {});
     labs.value = response.labs;
   } catch (err: any) {
     error.value = err.data?.message || 'Failed to load laboratories';

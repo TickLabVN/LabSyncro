@@ -1,12 +1,11 @@
 import { Type } from '@sinclair/typebox';
-import { db } from '~~/server/utils/db';
-import { UserResourceDto } from '~~/shared/schemas';
+import { UserDto } from '~~/shared/schemas';
 
 export default defineApi({
   params: Type.Object({
     id: Type.String()
   }),
-  response: UserResourceDto
+  response: UserDto
 }, async (event) => {
   const user = await db.user.findUnique({
     where: {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { debounce, sortBy } from 'lodash-es';
-import { deviceKindService, categoryService } from '~/services';
+import { deviceKindService, categoryService } from '~/apis';
 import { createColumns } from '~/components/app/DeviceInventoryByLabTable/column';
 
 definePageMeta({

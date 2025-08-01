@@ -1,5 +1,5 @@
 import { createPaginator } from 'prisma-extension-pagination';
-import { PrismaClient } from '../datasources/prisma/client';
+import { PrismaClient } from '../db/prisma/client';
 
 const paginate = createPaginator({
   pages: { includePageCount: true },

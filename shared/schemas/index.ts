@@ -130,24 +130,7 @@ export const ListOfDeviceResourceDto = Type.Object({
 
 export type ListOfDeviceResourceDto = Static<typeof ListOfDeviceResourceDto>;
 
-export const ListOfLabResourceDto = Type.Object({
-  labs: Type.Array(
-    Type.Object({
-      id: Type.String(),
-      branch: Type.String(),
-      timetable: Type.Record(Type.String(), Type.Array(Type.String())),
-      adminId: Type.String(),
-      adminName: Type.String(),
-      adminTel: Type.Union([Type.Null(), Type.String()]),
-      name: Type.String(),
-      room: Type.String(),
-    }),
-  ),
-});
-
-export type ListOfLabResourceDto = Static<typeof ListOfLabResourceDto>;
-
-export const UserResourceDto = Type.Object({
+export const UserDto = Type.Object({
   id: Type.String(),
   avatar: Type.Union([Type.String(), Type.Null()]),
   tel: Type.Union([Type.String(), Type.Null()]),
@@ -157,7 +140,7 @@ export const UserResourceDto = Type.Object({
   roles: Type.Array(Type.String()),
 });
 
-export type UserResourceDto = Static<typeof UserResourceDto>;
+export type UserDto = Static<typeof UserDto>;
 
 export const PrintQRCodeDto = Type.Object({
   id: Type.String(),
@@ -166,19 +149,3 @@ export const PrintQRCodeDto = Type.Object({
 });
 
 export type PrintQRCodeDto = Static<typeof PrintQRCodeDto>;
-
-export const AdminManagedLabsDto = Type.Object({
-  labs: Type.Array(
-    Type.Object({
-      id: Type.String(),
-      branch: Type.String(),
-      timetable: Type.Record(Type.String(), Type.Array(Type.String())),
-      name: Type.String(),
-      room: Type.String(),
-    }),
-  ),
-  totalPages: Type.Number(),
-  currentPage: Type.Number(),
-});
-
-export type AdminManagedLabsDto = Static<typeof AdminManagedLabsDto>;

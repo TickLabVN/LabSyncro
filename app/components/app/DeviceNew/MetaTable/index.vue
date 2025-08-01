@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { deviceKindService } from '~/services';
+import { deviceKindService } from '~/apis';
 import { columns } from './column';
 import type { AugmentedColumnDef } from '~/components/common/DataTable/column';
 

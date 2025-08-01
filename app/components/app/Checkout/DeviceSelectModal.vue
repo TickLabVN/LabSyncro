@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { deviceKindService } from '~/services';
+import { deviceKindService } from '~/apis';
 import type { DeviceKindResourceDto } from '~~/shared/schemas';
 
 const props = defineProps<{

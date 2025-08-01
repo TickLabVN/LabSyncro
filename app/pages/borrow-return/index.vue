@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { receiptService } from '~/services';
+import { receiptService } from '~/apis';
 
 definePageMeta({
   middleware: ['permission']

@@ -1,16 +1,13 @@
-import { Type, type Static, type TEnum, type TIntersect, type TObject, type TOptional, type TSchema, type TUndefined } from '@sinclair/typebox';
+import { Type, type Static, type TIntersect, type TObject, type TOptional, type TSchema, type TUndefined } from '@sinclair/typebox';
 import { Nullable } from './null';
-import { Prisma } from '~~/server/datasources/prisma/client';
+import type { Prisma } from '~~/server/db/prisma/client';
 
 const PaginateOptions = Type.Object({
   page: Type.Number({ default: 1 }),
   limit: Type.Number({ default: 10 }),
 });
 
-export function PaginateQuery<F extends TSchema, S extends TSchema>(
-  filter: F,
-  sort?: S
-) {
+export function PaginateQuery<F extends TSchema, S extends TSchema>(filter: F, sort?: S) {
   const options: TSchema[] = [PaginateOptions, filter];
   if (sort) {
     options.push(Type.Object({ sort: Type.Optional(sort) }));
@@ -19,17 +16,12 @@ export function PaginateQuery<F extends TSchema, S extends TSchema>(
     sort: TOptional<S>;
   }> | TUndefined]>;
 };
+export type PaginateQuery<F extends object, S = undefined> = {
+  page: number;
+  limit: number;
+  sort?: S;
+} & F;
 
-type SortOptionObject<K extends string> = Record<K, TOptional<TEnum<{
-  asc: 'asc';
-  desc: 'desc';
-}>>>
-export function SortOption<K extends string>(fields: K[]) {
-  const props = {} as SortOptionObject<K>;
-  for (const key of fields)
-    props[key] = Type.Optional(Type.Enum(Prisma.SortOrder));
-  return Type.Object(props);
-}
 export function toPrismaSort<T extends string>(
   options: Partial<Record<T, Prisma.SortOrder>>
 ): Partial<{ [K in T]: Prisma.SortOrder }>[] {
@@ -51,3 +43,4 @@ export const PaginateDto = <S extends TSchema>(T: S) => Type.Object({
   data: Type.Array(T),
   meta: PaginateMetadataDto,
 });
+export type Paginated<T> = { data: T[]; meta: PaginateMetadataDto };

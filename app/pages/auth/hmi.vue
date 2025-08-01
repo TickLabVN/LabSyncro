@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CheckCircle, XCircle } from 'lucide-vue-next';
 import useToast from 'vue-toastification';
-import { authService, laboratoryService } from '~/services';
+import { authService, lab } from '~/apis';
 
 definePageMeta({
   middleware: ['permission'],
@@ -57,7 +57,7 @@ async function handleLabSelection(lab: {
 }) {
   try {
     isLoading.value = true;
-    await laboratoryService.setHmiLab(hmiCode.value, lab.id);
+    await lab.setHmiLab(hmiCode.value, lab.id);
     toast.success(`Successfully connected to lab: ${lab.room}, ${lab.branch}`);
     isAuthenticated.value = false;
     isLoading.value = false;

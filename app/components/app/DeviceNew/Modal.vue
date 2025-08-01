@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { laboratoryService, deviceService } from '~/services';
+import { lab, deviceService } from '~/apis';
 
 interface AddDeviceForm {
   quantity: string
@@ -64,7 +64,7 @@ const handleSkip = () => {
 const labs = ref<{ id: string, name: string; room: string; branch: string }[]>([]);
 
 onMounted(async () => {
-  const data = (await laboratoryService.getAllLabs({})).labs;
+  const data = (await lab.list({})).labs;
   labs.value = data;
 });
 

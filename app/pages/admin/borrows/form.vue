@@ -7,7 +7,7 @@ import {
   deviceService,
   receiptService,
   userService,
-} from '~/services';
+} from '~/apis';
 
 definePageMeta({
   middleware: ['permission'],
@@ -363,13 +363,13 @@ useVirtualKeyboardDetection(handleVirtualKeyboardDetection, {
                     Mã đơn:
                     <span class="font-semibold text-blue-600">{{
                       formState.receiptCode
-                    }}</span>
+                      }}</span>
                   </div>
                   <div>
                     Ngày mượn:
                     <span class="font-semibold text-blue-600">{{
                       formState.borrowDate.toISOString().substr(0, 10)
-                    }}</span>
+                      }}</span>
                   </div>
                 </div>
               </div>

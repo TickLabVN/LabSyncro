@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { deviceService } from '~/services/devices';
+import { device } from '~/apis/devices';
 import { createColumns } from './column';
 import type { AugmentedColumnDef } from '~/components/common/DataTable/column';
 
@@ -16,7 +16,7 @@ const emits = defineEmits<{
 const { lab } = useLab();
 
 async function fetchData(offset: number, length: number, options: { desc?: boolean, sortField?: string, searchText?: string, searchFields?: string[] }): Promise<{ data: unknown[], totalPages: number }> {
-  const res = await deviceService.getByKind(props.kindId, offset, length, { searchText: options.searchText, searchFields: ['device_id'], sortField: options.sortField as any, desc: options.desc }, lab.value.id);
+  const res = await device.list(props.kindId, offset, length, { searchText: options.searchText, searchFields: ['device_id'], sortField: options.sortField as any, desc: options.desc }, lab.value.id);
   return {
     data: res.devices,
     totalPages: res.totalPages,

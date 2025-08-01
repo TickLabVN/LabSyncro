@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { debounce } from 'lodash-es';
-import { deviceKindService } from '~/services';
+import { deviceKindService } from '~/apis';
 
 const searchText = ref('');
 const updateSearchText = debounce((value: string) => searchText.value = value, 150);

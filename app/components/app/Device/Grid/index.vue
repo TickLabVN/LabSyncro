@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { deviceKindService } from '~/services';
+import { deviceKindService } from '~/apis';
 import { ITEM_WIDTH } from './constants';
 
 const props = defineProps<{
@@ -22,10 +22,10 @@ const rows = computed(() => {
     return null;
   }
   switch (cols.value) {
-  case 1: return 20;
-  case 2: return 15;
-  case 3: return 10;
-  default: return 5;
+    case 1: return 20;
+    case 2: return 15;
+    case 3: return 10;
+    default: return 5;
   }
 });
 const numberOfGridItems = computed(() => {
@@ -87,11 +87,9 @@ function pageRight() {
     <div v-else>
       <span ref="top" />
       <div :class="`grid grid-cols-${cols} gap-4 justify-items-center`" role="grid">
-        <div
-v-for="i in [...Array(numberOfGridItems).keys()]"
+        <div v-for="i in [...Array(numberOfGridItems).keys()]"
           :key="`${props.categoryId}-${props.searchText}-${i + currentPage * numberOfGridItems!}`">
-          <DeviceSuspenseItem
-v-if="i + currentPage * numberOfGridItems! < totalItems" :width="`${ITEM_WIDTH}px`"
+          <DeviceSuspenseItem v-if="i + currentPage * numberOfGridItems! < totalItems" :width="`${ITEM_WIDTH}px`"
             :fetch-fn="() => fetchItem(i + currentPage * numberOfGridItems!)" />
         </div>
       </div>
@@ -99,37 +97,30 @@ v-if="i + currentPage * numberOfGridItems! < totalItems" :width="`${ITEM_WIDTH}p
         <button class="px-2 py-1 rounded-tl-md rounded-bl-md border border-gray-100" @click="pageLeft">
           <Icon aria-hidden class="text-normal" name="i-heroicons-chevron-left" />
         </button>
-        <button
-v-if="currentPageGroup !== 0" class="text-sm px-2.5 border border-l-0 border-gray-100"
+        <button v-if="currentPageGroup !== 0" class="text-sm px-2.5 border border-l-0 border-gray-100"
           @click="setPage(0)">
           1
         </button>
-        <div
-v-if="currentPageGroup !== 0"
+        <div v-if="currentPageGroup !== 0"
           class="flex justify-center items-center text-sm px-2.5 border border-l-0 border-gray-100">
           ...
         </div>
         <div v-for="i in [...Array(numberOfPagesShown).keys()]" :key="currentPageGroup * numberOfPagesShown + i">
-          <button
-v-if="currentPageGroup * numberOfPagesShown + i < totalPages"
+          <button v-if="currentPageGroup * numberOfPagesShown + i < totalPages"
             :class="`h-full text-sm px-2.5 border border-l-0 border-gray-100 ${currentPageGroup * numberOfPagesShown + i === currentPage ? 'bg-green-500 text-white' : ''}`"
             @click="setPage(currentPageGroup * numberOfPagesShown + i)">
             {{ currentPageGroup * numberOfPagesShown + i + 1 }}
           </button>
         </div>
-        <div
-v-if="(currentPageGroup + 1) * numberOfPagesShown < totalPages"
+        <div v-if="(currentPageGroup + 1) * numberOfPagesShown < totalPages"
           class="flex justify-center items-center text-sm px-2.5 border border-l-0 border-gray-100">
           ...
         </div>
-        <button
-v-if="(currentPageGroup + 1) * numberOfPagesShown < totalPages"
+        <button v-if="(currentPageGroup + 1) * numberOfPagesShown < totalPages"
           class="text-sm px-2.5 border border-l-0 border-gray-100" @click="setPage(totalPages - 1)">
           {{ totalPages }}
         </button>
-        <button
-class="px-2 py-1 rounded-tr-md rounded-br-md border border-l-0 border-gray-100"
-          @click="pageRight">
+        <button class="px-2 py-1 rounded-tr-md rounded-br-md border border-l-0 border-gray-100" @click="pageRight">
           <Icon aria-hidden class="text-normal" name="i-heroicons-chevron-right" />
         </button>
       </div>

@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client"
-  output   = "../server/datasources/prisma"
+  output   = "../server/db/prisma"
 }
 
 datasource db {
@@ -98,19 +98,15 @@ model DeviceKindImage {
   @@id([deviceKindId, imageId])
 }
 
-model HMICode {
-  code       BigInt    @id @default(autoincrement())
-  created_at DateTime  @default(now())
-  user_id    String?
-  auth_token String?
-  status     String    @default("pending")
-  updated_at DateTime? @default(now())
-  expires_at DateTime?
-  lab_id     String?   @db.Uuid
-  labs       Lab?      @relation(fields: [lab_id], references: [id])
-  users      User?     @relation(fields: [user_id], references: [id])
+model Hmi {
+  lab   Lab?    @relation(fields: [labId], references: [id])
+  labId String? @map("lab_id") @db.VarChar(36)
 
-  @@map("hmi_codes")
+  id    String  @id @default(cuid()) @db.VarChar(36)
+  meta  Json    @default("{}")
+  token String?
+
+  @@map("hmi")
 }
 
 model InventoryAssessment {
@@ -143,14 +139,15 @@ model Lab {
   adminId String? @map("admin_id")
   admin   User?   @relation(fields: [adminId], references: [id])
 
-  id                                      String                @id @default(cuid()) @db.VarChar(36)
-  name                                    String                @db.VarChar(100)
-  faculty                                 String
-  room                                    String
-  branch                                  String
-  timetable                               Json
+  id        String @id @default(cuid()) @db.VarChar(36)
+  name      String @db.VarChar(100)
+  faculty   String
+  room      String
+  branch    String
+  timetable Json
+
   devices                                 Device[]
-  hmi_codes                               HMICode[]
+  hmis                                    Hmi[]
   inventory_assessments                   InventoryAssessment[]
   maintenances                            Maintenance[]
   receipts                                Receipt[]
@@ -277,7 +274,6 @@ model User {
   tel      String?
   roles    UserRole[]
 
-  hmiCodes                               HMICode[]
   assessments                            InventoryAssessment[]
   labs                                   Lab[]
   maintenances                           Maintenance[]

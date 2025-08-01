@@ -1,4 +1,4 @@
-import { HttpCode } from '../constants';
+import { HttpCode } from '../constants/network';
 
 export function internalServerError(message?: string) {
   return createError({

@@ -1,9 +1,9 @@
 import { Type } from '@sinclair/typebox';
-import { LabDto } from '~~/shared/schemas/lab';
+import { LabDto, LabQuery } from '~~/shared/schemas/lab';
 import type { JWT } from 'next-auth/jwt';
 
 export default defineApi({
-  query: Type.Object({ search: Type.Optional(Type.String()), adminId: Type.Optional(Type.String()) }),
+  query: LabQuery,
   response: Type.Array(LabDto),
 }, async (event) => {
   const token = event.context.auth as JWT;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Search } from 'lucide-vue-next';
-import { userService } from '~/services';
+import { userService } from '~/apis';
 import type { RoleWithStatsDto } from '~~/shared/schemas';
 
 definePageMeta({

@@ -1,5 +1,5 @@
 import { Type, type Static } from '@sinclair/typebox';
-import { DeviceStatus, UserRole } from '~~/server/datasources/prisma/client';
+import { DeviceStatus, UserRole } from '~~/server/db/prisma/client';
 import { Nullable } from './null';
 
 export const DeviceQuery = Type.Object({
@@ -7,11 +7,13 @@ export const DeviceQuery = Type.Object({
   labId: Type.Optional(Type.String()),
   search: Type.Optional(Type.String()),
 });
+export type DeviceQuery = Static<typeof DeviceQuery>;
 
 export const CreateDeviceDto = Type.Object({
   kindId: Type.String(),
   labId: Type.String(),
 });
+export type CreateDeviceDto = Static<typeof CreateDeviceDto>;
 
 export const DeviceDto = Type.Object({
   id: Type.String(),

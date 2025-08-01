@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { categoryService } from '~/services';
+import { categoryService } from '~/apis';
 
 definePageMeta({
   middleware: ['permission']

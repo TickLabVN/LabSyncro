@@ -1,9 +1,8 @@
 import { Type } from '@sinclair/typebox';
-import { db } from '~~/server/utils/db';
-import { UserResourceDto } from '~~/shared/schemas';
+import { UserDto } from '~~/shared/schemas';
 
 export default defineApi({
-  response: Type.Array(UserResourceDto),
+  response: Type.Array(UserDto),
   roles: ['SYSTEM_ADMIN', 'LAB_ADMIN']
 }, async () => {
   const users = await db.user.findMany({

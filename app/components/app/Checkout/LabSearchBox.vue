@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { laboratoryService } from '~/services';
+import { lab } from '~/apis';
 
 const emits = defineEmits<{
   select: [string],
@@ -23,7 +23,7 @@ const numberOfSearchItemsShown = 6;
 const searchItems = ref<{ id: string, name: string; room: string; branch: string }[]>([]);
 watch(searchText, async () => {
   focusedSearchItemIndex.value = null;
-  const data = (await laboratoryService.getAllLabs({ searchText: searchText.value || undefined, searchFields: ['location', 'lab_name'] })).labs;
+  const data = (await lab.list({ searchText: searchText.value || undefined, searchFields: ['location', 'lab_name'] })).labs;
   searchItems.value = data.slice(0, numberOfSearchItemsShown);
 });
 

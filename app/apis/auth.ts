@@ -1,5 +1,5 @@
-export const authService = {
-  async verifyQrToken(token: string, userId: string, timestamp: number): Promise<{ 
+export const auth = {
+  async verifyQrToken(token: string, userId: string, timestamp: number): Promise<{
     success: boolean;
     user: {
       id: string;
@@ -26,7 +26,7 @@ export const authService = {
     user: {
       id: string;
       name: string;
-      email: string;  
+      email: string;
     }
   }> {
     return await $fetch('/api/auth/hmi/authenticate', {

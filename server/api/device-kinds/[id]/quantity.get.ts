@@ -1,10 +1,10 @@
 import { Type } from '@sinclair/typebox';
-import { LabDeviceQuantityDto } from '~~/shared/schemas/deviceKind';
+import { DeviceQuantityDto } from '~~/shared/schemas/deviceKind';
 
 export default defineApi({
   query: Type.Object({ search: Type.Optional(Type.String()) }),
   params: Type.Object({ id: Type.String() }),
-  response: Type.Array(LabDeviceQuantityDto),
+  response: Type.Array(DeviceQuantityDto),
 }, async (event) => {
   const labs = await db.lab.findMany({
     select: {
