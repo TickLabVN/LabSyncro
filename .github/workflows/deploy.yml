@@ -5,7 +5,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: TickLabVN/labsyncro
+  IMAGE_NAME: ticklabvn/labsyncro
   ORG_USERNAME: ${{ github.actor }}
 
 permissions:
