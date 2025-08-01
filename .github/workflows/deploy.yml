@@ -5,7 +5,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: labsyncro/labsyncro
+  IMAGE_NAME: TickLabVN/labsyncro
   ORG_USERNAME: ${{ github.actor }}
 
 permissions:
@@ -82,7 +82,7 @@ jobs:
 
             cd labsyncro
 
-            curl -s https://raw.githubusercontent.com/LabSyncro/LabSyncro/main/docker-compose.yml -o docker-compose.yml
+            curl -s https://raw.githubusercontent.com/TickLabVN/LabSyncro/main/docker-compose.yml -o docker-compose.yml
 
             docker compose stop labsyncro
             docker compose rm -f labsyncro
